@@ -1,9 +1,11 @@
 package jp.ac.chiba_fjb.f.home;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,7 +13,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_input_add);
     }
 
     @Override
@@ -20,4 +23,19 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.humbergur, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (android.R.id.home == item.getItemId()) {
+            new AlertDialog.Builder(this)
+                .setTitle("メッセージ")
+                .setMessage("アイコンタップ")
+                .setPositiveButton("OK", null)
+                .show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }

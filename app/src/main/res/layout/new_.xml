@@ -15,16 +15,39 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
-        <EditText
-            android:id="@+id/editText"
+        <TextView
+            android:id="@+id/textView4"
             android:layout_width="match_parent"
-            android:layout_height="129dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.22" />
 
-            android:background="@android:color/background_light"
-            android:layout_margin="1dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:textColorLink="@android:color/black" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="0.22"
+            android:background="@android:color/background_dark"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="1dp"
+            android:weightSum="1">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/background_light"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:textColorLink="@android:color/black"
+                android:layout_weight="35.50" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.22" />
 
         <LinearLayout
             android:layout_width="wrap_content"

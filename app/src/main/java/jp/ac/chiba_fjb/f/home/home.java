@@ -18,7 +18,7 @@ public class home extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_input_add);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.faragment_area,new new_Fragment());
+        ft.replace(R.id.faragment_area,new teikeibunFragment());
         ft.commit();
     }
 

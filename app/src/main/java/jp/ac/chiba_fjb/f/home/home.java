@@ -1,5 +1,6 @@
 package jp.ac.chiba_fjb.f.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +29,22 @@ public class home extends AppCompatActivity {
         inflater.inflate(R.menu.humbergur, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.:
+                // 編集画面への遷移処理
+                Intent intent = new Intent(home.this, configFragment.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+
+        return super.onMenuItemSelected(featureId, item);
+    }
+}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

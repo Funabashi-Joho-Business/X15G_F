@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="jp.ac.chiba_fjb.f.home.home">
+    tools:context="jp.ac.chiba_fjb.f.home.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,27 +42,28 @@
             tools:layout_editor_absoluteY="8dp">
 
             <ImageButton
-                android:id="@+id/imageButton5"
+                android:id="@+id/homebutton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_weight="1.00"
+                android:background="@android:color/holo_blue_bright"
                 app:srcCompat="@android:drawable/btn_star_big_on"
                 tools:layout_editor_absoluteX="-23dp"
-                tools:layout_editor_absoluteY="326dp"/>
+                tools:layout_editor_absoluteY="326dp" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/kyouyubutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="共有"/>
+                android:text="共有" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/teikeibunbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="定型文"/>
+                android:text="定型文" />
         </LinearLayout>
     </LinearLayout>
 

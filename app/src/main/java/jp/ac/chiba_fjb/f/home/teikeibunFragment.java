@@ -2,10 +2,14 @@ package jp.ac.chiba_fjb.f.home;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 
 /**
@@ -27,4 +31,26 @@ public class teikeibunFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ImageButton homebutton = (ImageButton) view.findViewById(R.id.homebutton);
+        Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
+
+        homebutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, new homeFragment());
+                ft.commit();
+            }
+        });
+
+        kyouyubutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, new kyoyuFragment());
+                ft.commit();
+            }
+        });
+    }
 }

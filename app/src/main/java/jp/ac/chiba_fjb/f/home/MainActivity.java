@@ -1,5 +1,6 @@
 package jp.ac.chiba_fjb.f.home;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -8,20 +9,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
-public class home extends AppCompatActivity {
+public class home extends AppCompatActivity implements View.OnClickListener {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.home);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_input_add);
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.faragment_area,new teikeibunFragment());
-        ft.commit();
+        Button button = (Button)findViewById(R.id.button);
+        button.setOnClickListener(this);
+
+
+
+//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        ft.replace(R.id.faragment_area,new teikeibunFragment());
+//        ft.commit();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -30,21 +41,6 @@ public class home extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.:
-                // 編集画面への遷移処理
-                Intent intent = new Intent(home.this, configFragment.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
-
-        return super.onMenuItemSelected(featureId, item);
-    }
-}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -60,4 +56,10 @@ public class home extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.faragment_area,new kyoyuFragment());
+        ft.commit();
+    }
 }

@@ -35,6 +35,7 @@ public class kyoyuFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         ImageButton homebutton = (ImageButton) view.findViewById(R.id.homebutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
+        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
 
         homebutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -48,6 +49,14 @@ public class kyoyuFragment extends Fragment implements View.OnClickListener {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new teikeibunFragment());
+                ft.commit();
+            }
+        });
+
+        gomibakobutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, new gomi2Fragment());
                 ft.commit();
             }
         });

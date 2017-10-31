@@ -36,6 +36,7 @@ public class teikeibunFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ImageButton homebutton = (ImageButton) view.findViewById(R.id.homebutton);
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
+        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
 
         homebutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -52,5 +53,14 @@ public class teikeibunFragment extends Fragment {
                 ft.commit();
             }
         });
+
+        gomibakobutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, new gomi2Fragment());
+                ft.commit();
+            }
+        });
+
     }
 }

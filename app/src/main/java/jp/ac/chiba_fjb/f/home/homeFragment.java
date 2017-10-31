@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 
 /**
@@ -35,6 +36,7 @@ public class homeFragment extends Fragment  {
         super.onViewCreated(view, savedInstanceState);
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
+        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
 
         kyouyubutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -48,6 +50,14 @@ public class homeFragment extends Fragment  {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new teikeibunFragment());
+                ft.commit();
+            }
+        });
+
+        gomibakobutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, new gomi2Fragment());
                 ft.commit();
             }
         });

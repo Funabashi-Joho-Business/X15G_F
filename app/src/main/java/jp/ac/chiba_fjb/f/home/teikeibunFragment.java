@@ -42,6 +42,7 @@ public class teikeibunFragment extends Fragment {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new homeFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -50,6 +51,7 @@ public class teikeibunFragment extends Fragment {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new kyoyuFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -58,6 +60,7 @@ public class teikeibunFragment extends Fragment {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new gomi2Fragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });

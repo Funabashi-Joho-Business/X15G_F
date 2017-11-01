@@ -38,10 +38,12 @@ public class homeFragment extends Fragment  {
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
 
+
         kyouyubutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new kyoyuFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -50,6 +52,7 @@ public class homeFragment extends Fragment  {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new teikeibunFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -58,6 +61,7 @@ public class homeFragment extends Fragment  {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new gomi2Fragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });

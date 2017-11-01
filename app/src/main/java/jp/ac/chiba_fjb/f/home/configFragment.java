@@ -25,6 +25,7 @@ public class configFragment extends Fragment {
         getActivity().setTitle("設定");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.config, container, false);
+
     }
 
 }

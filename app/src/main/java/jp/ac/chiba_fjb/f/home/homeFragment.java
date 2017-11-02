@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 
 /**
@@ -37,6 +38,7 @@ public class homeFragment extends Fragment  {
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
+        TextView textView = (TextView)view.findViewById(R.id.edittext);
 
 
         kyouyubutton.setOnClickListener(new View.OnClickListener() {

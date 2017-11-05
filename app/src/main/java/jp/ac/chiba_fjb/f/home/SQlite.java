@@ -30,7 +30,7 @@ public abstract class SQlite extends SQLiteOpenHelper
     }
     public boolean isTable(String name)
     {
-        String sql = String.format("select name from sqlite_master where name='%s';",name);
+        String sql = String.format("select name from TextDB_master where name='%s';",name);
         Cursor c = query(sql);
         boolean flag =  c.moveToFirst();
         c.close();

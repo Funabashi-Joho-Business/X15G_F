@@ -1,6 +1,7 @@
 package jp.ac.chiba_fjb.f.home;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -9,15 +10,17 @@ import android.database.sqlite.SQLiteDatabase;
 
 public  class TextDB extends SQlite{
 
-    public TextDB(Context context) {
+    public TextDB(DialogInterface.OnClickListener context) {
         //ここでデータベースのファイル名とバージョン番号を指定
-        super(context, "test.db",1);
+        super((Context) context, "TextDB.db",1);
     }
+
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         //初期テーブルの作成
-        db.execSQL("create table test(name text);");
+        db.execSQL("create table TextDB(name TextDB);");
     }
 
     @Override

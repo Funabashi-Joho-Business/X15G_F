@@ -1,6 +1,7 @@
 package jp.ac.chiba_fjb.f.home;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -27,7 +28,9 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu3;
 import static jp.ac.chiba_fjb.f.home.R.id.menu4;
 import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
+
 public class MainActivity extends AppCompatActivity {
+    public String str;
 
 
     @Override
@@ -37,15 +40,9 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_input_add);
 
-        //データベースに接続
-        TextDB db = new TextDB(this);
-        //データの挿入
-        db.exec("insert into test values('あいうえお');");
 
-        //クエリーの発行
-        Cursor res = db.query("select * from test;");
 
-        //フラグメント表示
+    //フラグメント表示
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.faragment_area, new homeFragment());
         ft.commit();
@@ -92,21 +89,40 @@ public class MainActivity extends AppCompatActivity {
         //メニュー機能(左)
         if (android.R.id.home == item.getItemId()) {
             final EditText editView = new EditText(MainActivity.this);
-            final TextView textView = (TextView)findViewById(R.id.edittext);
+            final TextView textView = (TextView) findViewById(R.id.edittext);
             new AlertDialog.Builder(this)
                     .setTitle("新規テキスト入力")
                     .setView(editView)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String str = editView.getText().toString();
+                            str = editView.getText().toString();
+                            //データベースに接続
+                            TextDB db = new TextDB(this);
+                            //データの挿入
+                            db.exec("insert into test values('" + str + "');");
+
+                            //クエリーの発行
+                            Cursor res = db.query("select * from TextDB;");
+
+                            //データがなくなるまで次の行へ
+                            while (res.moveToNext()) {
+                                //0列目を取り出し
+                                textView.append(res.getString(0) + "\n");
+                            }
+                            //カーソルを閉じる
+                            res.close();
+                            //データベースを閉じる
+                            db.close();
 
 
                         }
                     })
+
                     .setNegativeButton("キャンセル",null)
                     .show();
         }
+
 
         return super.onOptionsItemSelected(item);
     }

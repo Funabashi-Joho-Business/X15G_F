@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import static jp.ac.chiba_fjb.f.home.R.id.TextView;
@@ -30,8 +31,6 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 
 public class MainActivity extends AppCompatActivity {
-    public String str;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,26 +88,28 @@ public class MainActivity extends AppCompatActivity {
         //メニュー機能(左)
         if (android.R.id.home == item.getItemId()) {
             final EditText editView = new EditText(MainActivity.this);
-            final TextView textView = (TextView) findViewById(R.id.edittext);
+            final LinearLayout layout = (LinearLayout)findViewById(R.id.layout5);
             new AlertDialog.Builder(this)
                     .setTitle("新規テキスト入力")
                     .setView(editView)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            str = editView.getText().toString();
+                            String str = editView.getText().toString();
                             //データベースに接続
-                            TextDB db = new TextDB(this);
+                            TextDB db = new TextDB(MainActivity.this);
                             //データの挿入
-                            db.exec("insert into test values('" + str + "');");
+                            db.exec("insert into TextDB values('" + str + "');");
 
                             //クエリーの発行
-                            Cursor res = db.query("select * from TextDB;");
+                            Cursor res = db.query("select * from TextDB ROWID = last_insert_rowid();;");
 
                             //データがなくなるまで次の行へ
                             while (res.moveToNext()) {
                                 //0列目を取り出し
+                                TextView textView = new TextView(MainActivity.this);
                                 textView.append(res.getString(0) + "\n");
+                                layout.addView(textView);
                             }
                             //カーソルを閉じる
                             res.close();

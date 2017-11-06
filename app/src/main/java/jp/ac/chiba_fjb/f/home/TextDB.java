@@ -10,11 +10,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 public  class TextDB extends SQlite{
 
-    public TextDB(DialogInterface.OnClickListener context) {
+    public TextDB(Context context) {
         //ここでデータベースのファイル名とバージョン番号を指定
-        super((Context) context, "TextDB.db",1);
+        super(context, "TextDB.db",1);
     }
-
 
 
     @Override

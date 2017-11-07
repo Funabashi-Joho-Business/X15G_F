@@ -37,25 +37,30 @@ public class homeFragment extends Fragment  {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        getActivity().setTitle("だいちのはさみ");
         super.onViewCreated(view, savedInstanceState);
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
         //インスタンスの取得
-        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout5);
+        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
 
         //データベースに接続
         TextDB db = new TextDB(getActivity());
 
         //クエリーの発行
-        Cursor res = db.query("select * from TextDB;");
+        Cursor res = db.query("select name from TextDB;");
         //データがなくなるまで次の行へ
         while(res.moveToNext())
         {
             //0列目を取り出し
-            TextView textView = new TextView(getActivity());
+            LinearLayout textlayout;
+            textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
+            TextView textView = (TextView)textlayout.findViewById(R.id.textView);
+//            TextView textView = new TextView(getActivity());
             textView.append(res.getString(0)+"\n");
-            layout.addView(textView);
+            layout.addView(textlayout);
+
         }
         //カーソルを閉じる
         res.close();

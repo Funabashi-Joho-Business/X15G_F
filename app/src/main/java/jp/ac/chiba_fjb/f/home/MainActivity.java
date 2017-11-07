@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         //メニュー機能(左)
         if (android.R.id.home == item.getItemId()) {
             final EditText editView = new EditText(MainActivity.this);
-            final LinearLayout layout = (LinearLayout)findViewById(R.id.layout5);
+            final LinearLayout layout = (LinearLayout)findViewById(R.id.layout4);
             new AlertDialog.Builder(this)
                     .setTitle("新規テキスト入力")
                     .setView(editView)
@@ -99,20 +99,24 @@ public class MainActivity extends AppCompatActivity {
                             //データベースに接続
                             TextDB db = new TextDB(MainActivity.this);
                             //データの挿入
-                            db.exec("insert into TextDB values('" + str + "');");
+                            db.exec("insert into TextDB(name) values('" + str + "');");
 
                             //クエリーの発行
-                            Cursor res = db.query("select * from TextDB ROWID = last_insert_rowid();;");
+                            Cursor res = db.query("select name from TextDB where id = (select max(id) from TextDB);");
 
                             //データがなくなるまで次の行へ
-                            while (res.moveToNext()) {
+                            if (res.moveToNext()) {
                                 //0列目を取り出し
                                 TextView textView = new TextView(MainActivity.this);
                                 textView.append(res.getString(0) + "\n");
                                 layout.addView(textView);
+
+                                //カーソルを閉じる
+                                res.close();
+                            }else{
+                                //カーソルを閉じる
+                                res.close();
                             }
-                            //カーソルを閉じる
-                            res.close();
                             //データベースを閉じる
                             db.close();
 

@@ -19,7 +19,7 @@ public  class TextDB extends SQlite{
     @Override
     public void onCreate(SQLiteDatabase db) {
         //初期テーブルの作成
-        db.execSQL("create table TextDB(name TextDB);");
+        db.execSQL("create table TextDB(id integer primary key,name text);");
     }
 
     @Override

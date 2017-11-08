@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="@color/lightsalmon"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="8dp">
 
@@ -28,12 +29,6 @@
                     android:layout_gravity="bottom"
                     android:orientation="vertical">
 
-                    <ImageButton
-                        android:id="@+id/gomibakobutton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        app:srcCompat="@android:drawable/ic_menu_delete" />
                 </LinearLayout>
             </ScrollView>
 
@@ -47,27 +42,40 @@
 
                 <ImageButton
                     android:id="@+id/homebutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1.00"
+                    android:background="@drawable/button_customize"
                     app:srcCompat="@android:drawable/btn_star_big_on"
                     tools:layout_editor_absoluteX="-23dp"
                     tools:layout_editor_absoluteY="326dp" />
 
                 <Button
                     android:id="@+id/kyouyubutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="共有" />
+                    android:background="@drawable/button_customize"
+                    android:text="共有"
+                    android:textColor="@color/white" />
 
                 <Button
                     android:id="@+id/teikeibunbutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:background="@android:color/holo_blue_bright"
-                    android:text="定型文" />
+                    android:background="@drawable/button_customize2"
+                    android:text="定型文"
+                    android:textColor="@color/black" />
+
+                <ImageButton
+                    android:id="@+id/gomibakobutton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="39dp"
+                    android:layout_gravity="right"
+                    android:background="@drawable/button_customize"
+                    app:srcCompat="@android:drawable/ic_menu_delete"
+                    android:layout_weight="0.36" />
             </LinearLayout>
         </LinearLayout>
 

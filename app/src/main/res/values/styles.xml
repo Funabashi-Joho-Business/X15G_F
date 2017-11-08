@@ -6,6 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
+        <item name="actionBarStyle">@style/actionBar</item>
 
+    </style>
+    <style name="actionBar" parent="Widget.AppCompat.ActionBar">
+        <!-- タイトルバーの背景色 -->
+        <item name="background">@color/Navy</item>
+    </style>
 </resources>

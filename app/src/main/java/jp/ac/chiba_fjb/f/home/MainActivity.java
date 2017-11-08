@@ -31,6 +31,7 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 
 public class MainActivity extends AppCompatActivity {
+    int in = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,17 @@ public class MainActivity extends AppCompatActivity {
                             //データベースに接続
                             TextDB db = new TextDB(MainActivity.this);
                             //データの挿入
-                            db.exec("insert into TextDB(name) values('" + str + "');");
+
+                            if(in%2==0){
+                                in = in + 1;
+                                db.exec("insert into TextDB(name) values('だいち："+str+"');");
+
+                            }else{
+                                in = in + 1;
+                                db.exec("insert into TextDB(name) values('母："+str+"');");
+
+                            }
+//                            db.exec("insert into TextDB(name) values('"+str+"');");
 
                             //クエリーの発行
                             Cursor res = db.query("select name from TextDB where id = (select max(id) from TextDB);");
@@ -107,9 +118,11 @@ public class MainActivity extends AppCompatActivity {
                             //データがなくなるまで次の行へ
                             if (res.moveToNext()) {
                                 //0列目を取り出し
-                                TextView textView = new TextView(MainActivity.this);
-                                textView.append(res.getString(0) + "\n");
-                                layout.addView(textView);
+                                LinearLayout textlayout;
+                                textlayout = (LinearLayout)getLayoutInflater().inflate(R.layout.text, null);
+                                TextView textView = (TextView)textlayout.findViewById(R.id.textView);
+                                textView.append(res.getString(0));
+                                layout.addView(textlayout);
 
                                 //カーソルを閉じる
                                 res.close();

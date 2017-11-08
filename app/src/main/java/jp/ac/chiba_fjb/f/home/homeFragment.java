@@ -58,7 +58,7 @@ public class homeFragment extends Fragment  {
             textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
             TextView textView = (TextView)textlayout.findViewById(R.id.textView);
 //            TextView textView = new TextView(getActivity());
-            textView.append(res.getString(0)+"\n");
+            textView.append(res.getString(0));
             layout.addView(textlayout);
 
         }

@@ -46,24 +46,39 @@ public class homeFragment extends Fragment  {
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
 
         //データベースに接続
-        TextDB db = new TextDB(getActivity());
+        final TextDB db = new TextDB(getActivity());
 
         //クエリーの発行
         Cursor res = db.query("select name from TextDB;");
+        Cursor res2 = db.query("select id from TextDB;");
         //データがなくなるまで次の行へ
         while(res.moveToNext())
         {
-            //0列目を取り出し
             LinearLayout textlayout;
             textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
             TextView textView = (TextView)textlayout.findViewById(R.id.textView);
-//            TextView textView = new TextView(getActivity());
+            final ImageButton imageButton = (ImageButton)textlayout.findViewById(R.id.sakuzyo);
+
+            //0列目を取り出し
             textView.append(res.getString(0));
+            if(res2.moveToNext()){
+                textView.setId(res2.getInt(0));
+                imageButton.setId(res2.getInt(0));
+            }
             layout.addView(textlayout);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                        int buttonid = v.getId();
+                        db.exec("delete from TextDB;");
+                    }
+            });
 
         }
         //カーソルを閉じる
         res.close();
+        res2.close();
         //データベースを閉じる
         db.close();
 

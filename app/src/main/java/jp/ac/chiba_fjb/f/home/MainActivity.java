@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -100,20 +101,11 @@ public class MainActivity extends AppCompatActivity {
                             //データベースに接続
                             TextDB db = new TextDB(MainActivity.this);
                             //データの挿入
-
-                            if(in%2==0){
-                                in = in + 1;
-                                db.exec("insert into TextDB(name) values('だいち："+str+"');");
-
-                            }else{
-                                in = in + 1;
-                                db.exec("insert into TextDB(name) values('母："+str+"');");
-
-                            }
-//                            db.exec("insert into TextDB(name) values('"+str+"');");
+                            db.exec("insert into TextDB(name) values('"+str+"');");
 
                             //クエリーの発行
                             Cursor res = db.query("select name from TextDB where id = (select max(id) from TextDB);");
+                            Cursor res2 = db.query("select id from TextDB where id = (select max(id) from TextDB);");
 
                             //データがなくなるまで次の行へ
                             if (res.moveToNext()) {
@@ -121,18 +113,21 @@ public class MainActivity extends AppCompatActivity {
                                 LinearLayout textlayout;
                                 textlayout = (LinearLayout)getLayoutInflater().inflate(R.layout.text, null);
                                 TextView textView = (TextView)textlayout.findViewById(R.id.textView);
+                                ImageButton imageButton = (ImageButton)textlayout.findViewById(R.id.sakuzyo);
                                 textView.append(res.getString(0));
+                                if(res2.moveToNext()){
+                                    textView.setId(res2.getInt(0));
+                                    imageButton.setId(res2.getInt(0));
+                                }
                                 layout.addView(textlayout);
-
-                                //カーソルを閉じる
-                                res.close();
-                            }else{
-                                //カーソルを閉じる
-                                res.close();
                             }
+
+                            //カーソルを閉じる
+                            res.close();
+                            res2.close();
+
                             //データベースを閉じる
                             db.close();
-
 
                         }
                     })

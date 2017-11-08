@@ -27,4 +27,6 @@ public class new_Fragment extends Fragment {
         return inflater.inflate(R.layout.new_, container, false);
     }
 
+
+
 }

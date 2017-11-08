@@ -2,6 +2,7 @@ package jp.ac.chiba_fjb.f.home;
 
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 /**
@@ -33,15 +37,42 @@ public class homeFragment extends Fragment  {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        getActivity().setTitle("だいちのはさみ");
         super.onViewCreated(view, savedInstanceState);
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
+        //インスタンスの取得
+        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+
+        //データベースに接続
+        TextDB db = new TextDB(getActivity());
+
+        //クエリーの発行
+        Cursor res = db.query("select name from TextDB;");
+        //データがなくなるまで次の行へ
+        while(res.moveToNext())
+        {
+            //0列目を取り出し
+            LinearLayout textlayout;
+            textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
+            TextView textView = (TextView)textlayout.findViewById(R.id.textView);
+//            TextView textView = new TextView(getActivity());
+            textView.append(res.getString(0));
+            layout.addView(textlayout);
+
+        }
+        //カーソルを閉じる
+        res.close();
+        //データベースを閉じる
+        db.close();
+
 
         kyouyubutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new kyoyuFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -50,6 +81,7 @@ public class homeFragment extends Fragment  {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new teikeibunFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -58,6 +90,7 @@ public class homeFragment extends Fragment  {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new gomi2Fragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });

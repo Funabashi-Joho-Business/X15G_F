@@ -175,22 +175,7 @@ public class MainActivity extends AppCompatActivity{
                         }
                     })
 
-                    .setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //システムのクリップボードを取得
-                            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-
-                            //クリップボードからClipDataを取得
-                            ClipData cd = cm.getPrimaryClip();
-
-                            //クリップデータからItemを取得
-                            if(cd != null){
-                                ClipData.Item item = cd.getItemAt(0);
-                                editView.setText(item.getText());
-                            }
-                        }
-                    })
+                    .setNegativeButton("キャンセル",null)
                     .show();
         }
 

@@ -4,8 +4,8 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launther"
-        android:label="だいちのはさみ"
+        android:icon="@drawable/lp_ic_alpha_only"
+        android:label="だいち"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"

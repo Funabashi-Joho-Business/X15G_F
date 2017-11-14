@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -45,25 +46,28 @@ public class configFragment extends Fragment {
             public void onClick(View v) {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
                 builder.setSmallIcon(R.drawable.ic_launther);  // 左端に表示されるアイコン
-                builder.setLargeIcon(BitmapFactory.decodeResource(getActivity().getResources(), R.mipmap.ic_launcher));
+                builder.setLargeIcon(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.lp_ic_alpha_only));
                 builder.setColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
                 builder.setContentTitle("だいち"); // 通知のタイトル
                 builder.setContentText("タップで表示");  // 通知メッセージ
+                // 通知を通知バーから削除できなくする
+                builder.setOngoing(true);
+                NotificationManager manager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+                int notifyID = 1;
               if(chkbox.isChecked() == true){
                   // チェックされた状態の時の処理を記述
-                  int notifyID = 1;
                   // NotificationManager.notify()に、通知IDとNotificationを渡すことで、通知が表示される
-                  NotificationManager manager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
                   manager.notify(notifyID, builder.build());
-                  // 通知を通知バーから削除できなくする
-                  builder.setOngoing(true);
+                  Toast.makeText(getActivity(), "通知をONにしました", Toast.LENGTH_LONG).show();
                   // Inflate the layout for this fragment
               }else{
                   // チェックされていない状態の時の処理を記述
                   // 引数falseで呼び出せば削除できるようになる
-                  builder.setOngoing(false);
+                  manager.cancel(notifyID);
+                  Toast.makeText(getActivity(), "通知をOFFにしました", Toast.LENGTH_LONG).show();
               }
             }
+
         });
     }
 

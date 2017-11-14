@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity{
                                     imageButton.setId(res.getInt(0));
                                 layout.addView(textlayout);
 
+
+
                                 imageButton.setOnClickListener(new View.OnClickListener() {
 
                                     @Override

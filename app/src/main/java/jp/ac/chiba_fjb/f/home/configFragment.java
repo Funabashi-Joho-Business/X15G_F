@@ -2,6 +2,8 @@ package jp.ac.chiba_fjb.f.home;
 
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -44,14 +46,22 @@ public class configFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+                Intent notificationIntent = new Intent(getActivity(), MainActivity.class);
+                PendingIntent contentIntent = PendingIntent.getActivity(getActivity(),0,notificationIntent,0);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
-                builder.setSmallIcon(R.drawable.ic_launther);  // 左端に表示されるアイコン
+                // 左端に表示されるアイコン
+                builder.setSmallIcon(R.drawable.ic_launther);
+                //タスクバー表示アイコン
                 builder.setLargeIcon(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.lp_ic_alpha_only));
+                //背景カラー
                 builder.setColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-                builder.setContentTitle("だいち"); // 通知のタイトル
-                builder.setContentText("タップで表示");  // 通知メッセージ
+                // 通知のタイトル
+                builder.setContentTitle("だいち");
+                // 通知メッセージ
+                builder.setContentText("タップで表示");
                 // 通知を通知バーから削除できなくする
                 builder.setOngoing(true);
+                builder.setContentIntent(contentIntent);
                 NotificationManager manager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
                 int notifyID = 1;
               if(chkbox.isChecked() == true){

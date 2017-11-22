@@ -5,11 +5,13 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import static android.content.Context.CLIPBOARD_SERVICE;
  * A simple {@link Fragment} subclass.
  */
 public class homeFragment extends Fragment  {
+
+   private  String strValue01;
 
 
     public homeFragment() {
@@ -49,6 +53,10 @@ public class homeFragment extends Fragment  {
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
+
+        homeFragment fragment = new homeFragment();
+
+
         //インスタンスの取得
         LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
 
@@ -79,7 +87,8 @@ public class homeFragment extends Fragment  {
                     TextDB db = new TextDB(getActivity());
                     db.exec("delete from TextDB where id="+id+";");
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.replace(R.id.faragment_area, new homeFragment());
+                    homeFragment fragment = new homeFragment();
+                    ft.replace(R.id.faragment_area, fragment);
                     ft.addToBackStack(null);
                     ft.commit();
                     db.close();
@@ -92,23 +101,72 @@ public class homeFragment extends Fragment  {
 
                 @Override
                 public void onClick(View v) {
-                    TextView textview2 = (TextView)view.findViewById(v.getId());
-                    String cliptext = textview2.getText().toString();
-                        //クリップボードに格納するItemを作成
-                        ClipData.Item item = new ClipData.Item(cliptext);
+                    strValue01 = null;
+                    strValue01 = getArguments().getString("VALUE01");
+                    final int id = v.getId();
+                    switch (strValue01) {
+                        case "menu1":
+                            TextView textview2 = (TextView) view.findViewById(id);
+                            String cliptext = textview2.getText().toString();
 
-                        //MIMETYPEの作成
-                        String[] mimeType = new String[1];
-                        mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
+                            //クリップボードに格納するItemを作成
+                            ClipData.Item item = new ClipData.Item(cliptext);
 
-                        //クリップボードに格納するClipDataオブジェクトの作成
-                        ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
+                            //MIMETYPEの作成
+                            String[] mimeType = new String[1];
+                            mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
 
-                        //クリップボードにデータを格納
-                        ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
-                        cm.setPrimaryClip(cd);
+                            //クリップボードに格納するClipDataオブジェクトの作成
+                            ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
 
-                        Toast.makeText(getActivity(), "「"+cliptext+"」をコピーしました", Toast.LENGTH_LONG).show();
+                            //クリップボードにデータを格納
+                            ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
+                            cm.setPrimaryClip(cd);
+
+                            Toast.makeText(getActivity(), "「" + cliptext + "」をコピーしました", Toast.LENGTH_LONG).show();
+                            break;
+
+                        case "menu2":
+                            final EditText editView2 = new EditText(getActivity());
+                            final LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+                            //データベースに接続
+                            TextDB db = new TextDB(getActivity());
+                            //データの取得
+                            Cursor res = db.query("select id,name from TextDB where id = "+id+";");
+                            res.moveToNext();
+
+                            editView2.setText(res.getString(1));
+                            db.close();
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("編集")
+                                    .setView(editView2)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                            homeFragment fragment = new homeFragment();
+                                            String str2 = editView2.getText().toString();
+
+                                            //データベースに接続
+                                            TextDB db = new TextDB(getActivity());
+                                            db.exec("update TextDB set name = '"+str2+"' where id="+id+";");
+
+                                            ft.replace(R.id.faragment_area, fragment);
+                                            ft.addToBackStack(null);
+                                            ft.commit();
+                                            db.close();
+
+
+                                        }
+                                    })
+                                    .setNegativeButton("キャンセル",null)
+                                    .show();
+                            break;
+
+                        default:
+                            Toast.makeText(getActivity(), "選択してください", Toast.LENGTH_LONG).show();
+                            break;
+                    }
                 }
             });
 

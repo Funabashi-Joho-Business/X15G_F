@@ -37,6 +37,7 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 
 public class MainActivity extends AppCompatActivity{
+    Bundle args = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +46,17 @@ public class MainActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_input_add);
 
+        homeFragment fragment = new homeFragment();
 
 
-    //フラグメント表示
+
+
+
+        //フラグメント表示
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.faragment_area, new homeFragment());
+        args.putString("VALUE01","null");
+        fragment.setArguments(args);
+        ft.replace(R.id.faragment_area, fragment);
         ft.commit();
 
     }
@@ -65,18 +72,29 @@ public class MainActivity extends AppCompatActivity{
     //メニュー機能(右)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        homeFragment fragment = new homeFragment();
+
 
         switch (item.getItemId()) {
             case menu1:
                 setTitle("だいちのはさみ");
+                args.putString("VALUE01","menu1");
+                fragment.setArguments(args);
+                Toast.makeText(MainActivity.this, "だいちのはさみモード", Toast.LENGTH_LONG).show();
                 return true;
 
             case menu2:
                 setTitle("編集");
+                args.putString("VALUE01","menu2");
+                fragment.setArguments(args);
+                Toast.makeText(MainActivity.this, "だいち編集モード", Toast.LENGTH_LONG).show();
                 return true;
 
             case menu3:
                 setTitle("痴漢");
+                args.putString("VALUE01","menu3");
+                fragment.setArguments(args);
                 return true;
 
             case menu4:
@@ -84,7 +102,6 @@ public class MainActivity extends AppCompatActivity{
                 return true;
 
             case menu5:
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new configFragment());
                 ft.addToBackStack(null);
                 ft.commit();
@@ -118,13 +135,14 @@ public class MainActivity extends AppCompatActivity{
                                 TextView textView = (TextView)textlayout.findViewById(R.id.textView);
                                 ImageButton imageButton = (ImageButton)textlayout.findViewById(R.id.sakuzyo);
                                 textView.append(res.getString(1));
-                                    textView.setId(res.getInt(0));
-                                    imageButton.setId(res.getInt(0));
+                                textView.setId(res.getInt(0));
+                                imageButton.setId(res.getInt(0));
                                 layout.addView(textlayout);
 
 
 
                                 imageButton.setOnClickListener(new View.OnClickListener() {
+                                    homeFragment fragment = new homeFragment();
 
                                     @Override
                                     public void onClick(View v) {
@@ -132,7 +150,7 @@ public class MainActivity extends AppCompatActivity{
                                         TextDB db = new TextDB(MainActivity.this);
                                         db.exec("delete from TextDB where id="+id+";");
                                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                        ft.replace(R.id.faragment_area, new homeFragment());
+                                        ft.replace(R.id.faragment_area, fragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
                                         db.close();
@@ -144,24 +162,73 @@ public class MainActivity extends AppCompatActivity{
                                 textView.setOnClickListener(new View.OnClickListener() {
 
                                     @Override
-                                    public void onClick(View v) {
-                                        TextView textview2 = (TextView)findViewById(v.getId());
-                                        String cliptext = textview2.getText().toString();
-                                        //クリップボードに格納するItemを作成
-                                        ClipData.Item item = new ClipData.Item(cliptext);
+                                    public void onClick(final View v) {
+                                        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                        String strValue01 = args.getString("VALUE01");
+                                        final int id = v.getId();
 
-                                        //MIMETYPEの作成
-                                        String[] mimeType = new String[1];
-                                        mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
+                                        switch (strValue01) {
+                                            case "menu1":
+                                                TextView textview2 = (TextView)findViewById(id);
+                                                String cliptext = textview2.getText().toString();
 
-                                        //クリップボードに格納するClipDataオブジェクトの作成
-                                        ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
+                                                //クリップボードに格納するItemを作成
+                                                ClipData.Item item = new ClipData.Item(cliptext);
 
-                                        //クリップボードにデータを格納
-                                        ClipboardManager cm = (ClipboardManager) MainActivity.this.getSystemService(CLIPBOARD_SERVICE);
-                                        cm.setPrimaryClip(cd);
+                                                //MIMETYPEの作成
+                                                String[] mimeType = new String[1];
+                                                mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
 
-                                        Toast.makeText(MainActivity.this, "「"+cliptext+"」をコピーしました", Toast.LENGTH_LONG).show();
+                                                //クリップボードに格納するClipDataオブジェクトの作成
+                                                ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
+
+                                                //クリップボードにデータを格納
+                                                ClipboardManager cm = (ClipboardManager) MainActivity.this.getSystemService(CLIPBOARD_SERVICE);
+                                                cm.setPrimaryClip(cd);
+
+                                                Toast.makeText(MainActivity.this, "「" + cliptext + "」をコピーしました", Toast.LENGTH_LONG).show();
+                                                break;
+
+                                            case "menu2":
+                                                final EditText editView2 = new EditText(MainActivity.this);
+                                                final LinearLayout layout = (LinearLayout)findViewById(R.id.layout4);
+                                                //データベースに接続
+                                                TextDB db = new TextDB(MainActivity.this);
+                                                //データの取得
+                                                Cursor res = db.query("select id,name from TextDB where id = "+id+";");
+                                                res.moveToNext();
+
+                                                editView2.setText(res.getString(1));
+                                                db.close();
+                                                new AlertDialog.Builder(MainActivity.this)
+                                                        .setTitle("編集")
+                                                        .setView(editView2)
+                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                homeFragment fragment = new homeFragment();
+                                                                String str2 = editView2.getText().toString();
+
+                                                                //データベースに接続
+                                                                TextDB db = new TextDB(MainActivity.this);
+                                                                db.exec("update TextDB set name = '"+str2+"' where id="+id+";");
+
+                                                                ft.replace(R.id.faragment_area, fragment);
+                                                                ft.addToBackStack(null);
+                                                                ft.commit();
+                                                                db.close();
+
+
+                                                            }
+                                                        })
+                                                        .setNegativeButton("キャンセル",null)
+                                                        .show();
+                                                break;
+
+                                            default:
+                                                Toast.makeText(MainActivity.this, "選択してください", Toast.LENGTH_LONG).show();
+                                                break;
+                                        }
                                     }
                                 });
 

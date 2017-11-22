@@ -4,8 +4,10 @@ package jp.ac.chiba_fjb.f.home;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -42,6 +44,11 @@ public class configFragment extends Fragment {
         getActivity().setTitle("設定");
         super.onViewCreated(view, savedInstanceState);
         final CheckBox chkbox = (CheckBox) view.findViewById(R.id.checkBox);
+
+        //チェック状態確認
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        chkbox.setChecked(sp.getBoolean("Check", Boolean.parseBoolean(null)));
+
         chkbox.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -69,12 +76,19 @@ public class configFragment extends Fragment {
                   // NotificationManager.notify()に、通知IDとNotificationを渡すことで、通知が表示される
                   manager.notify(notifyID, builder.build());
                   Toast.makeText(getActivity(), "通知をONにしました", Toast.LENGTH_LONG).show();
+                  //チェック状態保存
+                  Boolean Check = chkbox.isChecked();
+                  SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                  sp.edit().putBoolean("Check", Check).commit();
                   // Inflate the layout for this fragment
               }else{
                   // チェックされていない状態の時の処理を記述
-                  // 引数falseで呼び出せば削除できるようになる
                   manager.cancel(notifyID);
                   Toast.makeText(getActivity(), "通知をOFFにしました", Toast.LENGTH_LONG).show();
+                  //チェック状態保存
+                  Boolean Check = chkbox.isChecked();
+                  SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                  sp.edit().putBoolean("Check", Check).commit();
               }
             }
 

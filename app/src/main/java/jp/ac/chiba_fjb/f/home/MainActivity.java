@@ -28,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import static jp.ac.chiba_fjb.f.home.R.id.TextView;
 import static jp.ac.chiba_fjb.f.home.R.id.menu1;
 import static jp.ac.chiba_fjb.f.home.R.id.menu2;
@@ -37,7 +39,9 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 
 public class MainActivity extends AppCompatActivity{
-    Bundle args = new Bundle();
+//    Bundle args = new Bundle();
+    menuID menuID = new menuID();
+    private static String mId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +52,18 @@ public class MainActivity extends AppCompatActivity{
 
         homeFragment fragment = new homeFragment();
 
+        menuID.setMenuid("null");
+
+
+
 
 
 
 
         //フラグメント表示
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        args.putString("VALUE01","null");
-        fragment.setArguments(args);
+//        args.putString("VALUE01","syoki");
+//        fragment.setArguments(args);
         ft.replace(R.id.faragment_area, fragment);
         ft.commit();
 
@@ -78,23 +86,26 @@ public class MainActivity extends AppCompatActivity{
 
         switch (item.getItemId()) {
             case menu1:
+                mId = "menu1";
                 setTitle("だいちのはさみ");
-                args.putString("VALUE01","menu1");
-                fragment.setArguments(args);
+                menuID.setMenuid("menu1");
+//                args.putString("VALUE01","menu1");
+//                fragment.setArguments(args);
                 Toast.makeText(MainActivity.this, "だいちのはさみモード", Toast.LENGTH_LONG).show();
                 return true;
 
             case menu2:
                 setTitle("編集");
-                args.putString("VALUE01","menu2");
-                fragment.setArguments(args);
+                mId = "menu2";
+//                args.putString("VALUE01","menu2");
+//                fragment.setArguments(args);
                 Toast.makeText(MainActivity.this, "だいち編集モード", Toast.LENGTH_LONG).show();
                 return true;
 
             case menu3:
                 setTitle("痴漢");
-                args.putString("VALUE01","menu3");
-                fragment.setArguments(args);
+//                args.putString("VALUE01","menu3");
+//                fragment.setArguments(args);
                 return true;
 
             case menu4:
@@ -164,7 +175,8 @@ public class MainActivity extends AppCompatActivity{
                                     @Override
                                     public void onClick(final View v) {
                                         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                        String strValue01 = args.getString("VALUE01");
+                                        String strValue01 = menuID.getMenuid();
+//                                        String strValue01 = args.getString("VALUE01");
                                         final int id = v.getId();
 
                                         switch (strValue01) {
@@ -259,6 +271,10 @@ public class MainActivity extends AppCompatActivity{
         if (backStackCnt != 0) {
             getSupportFragmentManager().popBackStack();
         }
+    }
+
+    public String getmId(){
+        return mId;
     }
 
 }

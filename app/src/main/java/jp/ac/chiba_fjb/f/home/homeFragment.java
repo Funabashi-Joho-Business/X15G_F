@@ -30,8 +30,8 @@ import static android.content.Context.CLIPBOARD_SERVICE;
  */
 public class homeFragment extends Fragment  {
 
-   private  String strValue01;
-
+    private  String strValue01;
+    private  String strValue02;
 
     public homeFragment() {
         // Required empty public constructor
@@ -101,9 +101,16 @@ public class homeFragment extends Fragment  {
 
                 @Override
                 public void onClick(View v) {
-                    strValue01 = null;
-                    strValue01 = getArguments().getString("VALUE01");
+                    menuID menuID = new menuID();
+//                    strValue01 = menuID.getMenuid();
+                    strValue01 = new MainActivity().getmId();
                     final int id = v.getId();
+//                    if(strValue01 == null){
+//                        strValue01 = getArguments().getString("VALUE01");
+//                    }else if(strValue01 != strValue02){
+//                        strValue01 = getArguments().getString("VALUE01");
+//                        strValue02 = strValue01;
+//                    }
                     switch (strValue01) {
                         case "menu1":
                             TextView textview2 = (TextView) view.findViewById(id);

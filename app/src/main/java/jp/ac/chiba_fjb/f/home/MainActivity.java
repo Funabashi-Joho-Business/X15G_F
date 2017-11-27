@@ -39,8 +39,6 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 
 public class MainActivity extends AppCompatActivity{
-//    Bundle args = new Bundle();
-    menuID menuID = new menuID();
     private static String mId;
 
     @Override
@@ -52,7 +50,8 @@ public class MainActivity extends AppCompatActivity{
 
         homeFragment fragment = new homeFragment();
 
-        menuID.setMenuid("null");
+        mId = "";
+
 
 
 
@@ -62,8 +61,6 @@ public class MainActivity extends AppCompatActivity{
 
         //フラグメント表示
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        args.putString("VALUE01","syoki");
-//        fragment.setArguments(args);
         ft.replace(R.id.faragment_area, fragment);
         ft.commit();
 
@@ -88,24 +85,18 @@ public class MainActivity extends AppCompatActivity{
             case menu1:
                 mId = "menu1";
                 setTitle("だいちのはさみ");
-                menuID.setMenuid("menu1");
-//                args.putString("VALUE01","menu1");
-//                fragment.setArguments(args);
-                Toast.makeText(MainActivity.this, "だいちのはさみモード", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "だいちのはさみモード", Toast.LENGTH_SHORT).show();
                 return true;
 
             case menu2:
                 setTitle("編集");
                 mId = "menu2";
-//                args.putString("VALUE01","menu2");
-//                fragment.setArguments(args);
-                Toast.makeText(MainActivity.this, "だいち編集モード", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "だいち編集モード", Toast.LENGTH_SHORT).show();
                 return true;
 
             case menu3:
                 setTitle("痴漢");
-//                args.putString("VALUE01","menu3");
-//                fragment.setArguments(args);
+                mId = "menu3";
                 return true;
 
             case menu4:
@@ -175,8 +166,7 @@ public class MainActivity extends AppCompatActivity{
                                     @Override
                                     public void onClick(final View v) {
                                         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                        String strValue01 = menuID.getMenuid();
-//                                        String strValue01 = args.getString("VALUE01");
+                                        String strValue01 = mId;
                                         final int id = v.getId();
 
                                         switch (strValue01) {
@@ -198,7 +188,7 @@ public class MainActivity extends AppCompatActivity{
                                                 ClipboardManager cm = (ClipboardManager) MainActivity.this.getSystemService(CLIPBOARD_SERVICE);
                                                 cm.setPrimaryClip(cd);
 
-                                                Toast.makeText(MainActivity.this, "「" + cliptext + "」をコピーしました", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(MainActivity.this, "「" + cliptext + "」をコピーしました", Toast.LENGTH_SHORT).show();
                                                 break;
 
                                             case "menu2":
@@ -238,7 +228,7 @@ public class MainActivity extends AppCompatActivity{
                                                 break;
 
                                             default:
-                                                Toast.makeText(MainActivity.this, "選択してください", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(MainActivity.this, "選択してください", Toast.LENGTH_SHORT).show();
                                                 break;
                                         }
                                     }

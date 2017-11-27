@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity{
             case menu3:
                 setTitle("痴漢");
                 mId = "menu3";
+                Toast.makeText(MainActivity.this, "だいち痴漢モード", Toast.LENGTH_SHORT).show();
                 return true;
 
             case menu4:
@@ -149,13 +150,22 @@ public class MainActivity extends AppCompatActivity{
                                     @Override
                                     public void onClick(View v) {
                                         int id = v.getId();
+                                        //データベースに接続
                                         TextDB db = new TextDB(MainActivity.this);
-                                        db.exec("delete from TextDB where id="+id+";");
+                                        Cursor res = db.query("select id,name from TextDB where id = "+id+";");
+                                        res.moveToNext();
+                                        String mGomi = res.getString(1);
+                                        db.close();
+
+                                        //データベースに接続
+                                        TextDB db2 = new TextDB(MainActivity.this);
+                                        db2.exec("insert into GomiDB(name) values('"+mGomi+"');");
+                                        db2.exec("delete from TextDB where id="+id+";");
                                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                                         ft.replace(R.id.faragment_area, fragment);
                                         ft.addToBackStack(null);
                                         ft.commit();
-                                        db.close();
+                                        db2.close();
 
 
                                     }
@@ -226,6 +236,49 @@ public class MainActivity extends AppCompatActivity{
                                                         .setNegativeButton("キャンセル",null)
                                                         .show();
                                                 break;
+
+//                                            case "menu3":
+//                                                final EditText editView3 = new EditText(MainActivity.this);
+//                                                final EditText editView4 = new EditText(MainActivity.this);
+//                                                final LinearLayout layout2 = (LinearLayout)findViewById(R.id.layout4);
+//                                                //データベースに接続
+//                                                TextDB db2 = new TextDB(MainActivity.this);
+//                                                //データの取得
+//                                                Cursor res2 = db2.query("select id,name from TextDB where id = "+id+";");
+//                                                res2.moveToNext();
+//
+//                                                String str3 = (res2.getString(1));
+//                                                db2.close();
+//                                                new AlertDialog.Builder(MainActivity.this)
+//                                                        .setTitle("置換")
+//                                                        //.setMessage(str3)
+//                                                        .setView(editView3)
+//                                                        //.setMessage("")
+//                                                        .setView(editView4)
+//                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                                                            @Override
+//                                                            public void onClick(DialogInterface dialog, int which) {
+//                                                                homeFragment fragment = new homeFragment();
+//                                                                String str4 = editView3.getText().toString();
+//                                                                String str5 = editView4.getText().toString();
+//
+//
+//                                                                //データベースに接続
+//                                                                TextDB db = new TextDB(MainActivity.this);
+//                                                                db.exec("select replace(name,'"+str4+"','"+str5+"') from TextDB where id="+id+";");
+//                                                                //SELECT REPLACE(カラム名,'置換対象','置換後の文字') FROM テーブル名;
+//
+//                                                                ft.replace(R.id.faragment_area, fragment);
+//                                                                ft.addToBackStack(null);
+//                                                                ft.commit();
+//                                                                db.close();
+//
+//
+//                                                            }
+//                                                        })
+//                                                        .setNegativeButton("キャンセル",null)
+//                                                        .show();
+//                                                break;
 
                                             default:
                                                 Toast.makeText(MainActivity.this, "選択してください", Toast.LENGTH_SHORT).show();

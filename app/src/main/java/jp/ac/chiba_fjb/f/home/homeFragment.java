@@ -83,14 +83,33 @@ public class homeFragment extends Fragment  {
                 @Override
                 public void onClick(View v) {
                     int id = v.getId();
+                    //データベースに接続
                     TextDB db = new TextDB(getActivity());
-                    db.exec("delete from TextDB where id="+id+";");
+                    Cursor res = db.query("select id,name from TextDB where id = "+id+";");
+                    res.moveToNext();
+                    String mGomi = res.getString(1);
+                    db.close();
+
+                    //データベースに接続
+                    TextDB db2 = new TextDB(getActivity());
+                    db2.exec("insert into GomiDB(name) values('"+mGomi+"');");
+                    db2.exec("delete from TextDB where id="+id+";");
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    homeFragment fragment = new homeFragment();
-                    ft.replace(R.id.faragment_area, fragment);
+                    ft.replace(R.id.faragment_area, new homeFragment());
                     ft.addToBackStack(null);
                     ft.commit();
-                    db.close();
+                    db2.close();
+
+
+//                    int id = v.getId();
+//                    TextDB db = new TextDB(getActivity());
+//                    db.exec("delete from TextDB where id="+id+";");
+//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                    homeFragment fragment = new homeFragment();
+//                    ft.replace(R.id.faragment_area, fragment);
+//                    ft.addToBackStack(null);
+//                    ft.commit();
+//                    db.close();
 
 
                     }

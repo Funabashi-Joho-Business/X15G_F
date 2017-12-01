@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,6 +27,8 @@ public class gomi2Fragment extends Fragment {
         // Required empty public constructor
 
     }
+    final ArrayList<Integer> id2 =  new ArrayList<Integer>();
+    ArrayList<CheckBox> id3 =  new ArrayList<CheckBox>();
 
 
     @Override
@@ -42,8 +43,8 @@ public class gomi2Fragment extends Fragment {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Button hukugen = (Button)view.findViewById(R.id.button4);
-
-        final ArrayList<Integer> id2 =  new ArrayList<Integer>();
+        Button sakuzyo = (Button)view.findViewById(R.id.button5);
+        Button ikkatu = (Button)view.findViewById(R.id.button7);
 
 
         //インスタンスの取得
@@ -65,7 +66,49 @@ public class gomi2Fragment extends Fragment {
             textView2.append(res.getString(1));
             textView2.setId(res.getInt(0));
             checkBox.setId(res.getInt(0));
+            id3.add(checkBox);
+
+
             layout.addView(textlayout);
+
+
+            ikkatu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int i = 0;
+                    int y = 0;
+                    //データベースに接続
+                    TextDB db = new TextDB(getActivity());
+
+                    //クエリーの発行
+                    Cursor res = db.query("select id,name from GomiDB where id = (select max(id) from GomiDB);");
+                    res.moveToNext();
+                    int max = res.getInt(0);
+                    db.close();
+
+                    while (i < max) {
+                        if(id3.get(i).isChecked() == false) {
+                            id3.get(i).setChecked(true);
+                            i++;
+                            id2.add(i);
+                        }else{
+                               for(int x = 0;x < max;x++){
+                                   if(id3.get(x).isChecked() == true) {
+                                       y++;
+                                   }
+                               }
+                            if(y == max) {
+                                for (int a = 0; a < max; a++) {
+                                    id3.get(a).setChecked(false);
+                                }
+                                id2.clear();
+                                break;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            });
 
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -74,7 +117,7 @@ public class gomi2Fragment extends Fragment {
                     id2.add(v.getId());
 
                     }else if(checkBox.isChecked()  == false){
-                        for(int x = 0;x <= id2.size();x++){
+                        for(int x = 0;x < id2.size();x++){
                             if(id2.get(x) == v.getId()) id2.remove(x);
                         }
                     }
@@ -83,6 +126,7 @@ public class gomi2Fragment extends Fragment {
             });
 
         }
+
 
         hukugen.setOnClickListener(new View.OnClickListener() {
 
@@ -100,7 +144,6 @@ public class gomi2Fragment extends Fragment {
                 db.close();
 
                 while (i < max){
-                    int y = id2.get(i);
                     //データベースに接続
                     TextDB db2 = new TextDB(getActivity());
                     Cursor res2 = db2.query("select id,name from GomiDB where id = "+id2.get(i)+";");
@@ -113,26 +156,35 @@ public class gomi2Fragment extends Fragment {
                     db3.exec("delete from GomiDB where id="+id2.get(i)+";");
                     db3.close();
                     i++;
-//                    CheckBox checkBox2 = (CheckBox) view.findViewById(id2.get(i));
-//                    if(checkBox2.isChecked() == true){
-//                        //データベースに接続
-//                        TextDB db2 = new TextDB(getActivity());
-//
-//                        //データの取得
-//                        Cursor res2 = db.query("select id,name from TextDB where id = "+i+";");
-//                        res.moveToNext();
-//
-//                        String mGomi = res.getString(1);
-//                        db.close();
-//
-//                        //データベースに接続
-//                        TextDB db3 = new TextDB(getActivity());
-//                        db3.exec("insert into TextDB(name) values('"+mGomi+"');");
-//                        db3.exec("delete from GomiDB where id="+i+";");
-//                        db3.close();
-//                        i++;
-//
-//                    }
+                }
+                id2.clear();
+                gomi2Fragment gomifra = new gomi2Fragment();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, gomifra);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
+        sakuzyo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int i = 0;
+                //データベースに接続
+                TextDB db = new TextDB(getActivity());
+
+                //クエリーの発行
+                Cursor res = db.query("select id,name from GomiDB where id = (select max(id) from GomiDB);");
+                res.moveToNext();
+                int max = res.getInt(0);
+                db.close();
+
+                while (i < max){
+                    TextDB db3 = new TextDB(getActivity());
+                    db3.exec("delete from GomiDB where id="+id2.get(i)+";");
+                    db3.close();
+                    i++;
                 }
                 gomi2Fragment gomifra = new gomi2Fragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();

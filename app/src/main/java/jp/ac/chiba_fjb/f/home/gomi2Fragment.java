@@ -100,8 +100,8 @@ public class gomi2Fragment extends Fragment {
                             if(y == max) {
                                 for (int a = 0; a < max; a++) {
                                     id3.get(a).setChecked(false);
+                                    id2.remove(a);
                                 }
-                                id2.clear();
                                 break;
                             }
                             i++;

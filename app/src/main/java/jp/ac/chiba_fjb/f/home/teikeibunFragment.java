@@ -38,10 +38,12 @@ public class teikeibunFragment extends Fragment {
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
 
+
         homebutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.faragment_area, new homeFragment());
+                homeFragment fragment = new homeFragment();
+                ft.replace(R.id.faragment_area, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
             }

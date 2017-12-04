@@ -37,10 +37,12 @@ public class kyoyuFragment extends Fragment implements View.OnClickListener {
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
 
+
         homebutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.faragment_area, new homeFragment());
+                homeFragment fragment = new homeFragment();
+                ft.replace(R.id.faragment_area, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
             }

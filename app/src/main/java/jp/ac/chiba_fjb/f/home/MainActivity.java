@@ -5,8 +5,11 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -16,6 +19,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +33,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.util.List;
+
 import static jp.ac.chiba_fjb.f.home.R.id.TextView;
 import static jp.ac.chiba_fjb.f.home.R.id.menu1;
 import static jp.ac.chiba_fjb.f.home.R.id.menu2;
@@ -38,12 +50,37 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 public class MainActivity extends AppCompatActivity{
 
+    private SpreadSheet mSheet;
+    static public String getAppFinger(Context con){
+        try {
+            PackageInfo packageInfo = con.getPackageManager().getPackageInfo(con.getPackageName(), PackageManager.GET_SIGNATURES);
+            InputStream input = new ByteArrayInputStream(packageInfo.signatures[0].toByteArray());
+            Certificate c = CertificateFactory.getInstance("X509").generateCertificate(input);
+            byte[] publicKey = MessageDigest.getInstance("SHA1").digest(c.getEncoded());
+
+            StringBuffer hexString = new StringBuffer();
+            for (int i=0;i<publicKey.length;i++)
+                hexString.append(String.format("%02x",publicKey[i]));
+            return hexString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_input_add);
+
+        //スプレットシートの生成
+        mSheet = new SpreadSheet(this);
+        //mSheet.resetAccount();
+        //許可済みか確認
+        if(mSheet.connect())
+            start();
 
 
 
@@ -53,6 +90,58 @@ public class MainActivity extends AppCompatActivity{
         ft.commit();
 
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
+    }
+    void start(){
+        //通信用スレッド
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                //スプレッドシートの作成
+                String id = mSheet.create("/ComData/Setting");
+
+                if(id != null){
+                    //データの書き込み
+                    Object[][] values = {{"あいうえお","かきくけこ"},{"ああああ"},{"=1+2"}};
+                    mSheet.setRange(id,values);
+
+                    //全データの取得
+                    List<List<Object>> data = mSheet.getRange(id);
+                    System.out.println(data);
+                }
+
+            }
+        }.start();
+
+Q
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //認証許可情報を設定
+        mSheet.onActivityResult(requestCode, resultCode, data);
+        start();
+    }
+
+
+
+
+
 
     //メニュー機能
     @Override

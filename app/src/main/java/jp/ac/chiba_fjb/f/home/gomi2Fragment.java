@@ -100,8 +100,8 @@ public class gomi2Fragment extends Fragment {
                             if(y == max) {
                                 for (int a = 0; a < max; a++) {
                                     id3.get(a).setChecked(false);
-                                    id2.remove(a);
                                 }
+                                id2.clear();
                                 break;
                             }
                             i++;
@@ -119,6 +119,7 @@ public class gomi2Fragment extends Fragment {
                     }else if(checkBox.isChecked()  == false){
                         for(int x = 0;x < id2.size();x++){
                             if(id2.get(x) == v.getId()) id2.remove(x);
+
                         }
                     }
 
@@ -138,7 +139,7 @@ public class gomi2Fragment extends Fragment {
                 TextDB db = new TextDB(getActivity());
 
                 //クエリーの発行
-                Cursor res = db.query("select id,name from GomiDB where id = (select max(id) from GomiDB);");
+                Cursor res = db.query("select id,name from GomiDB where id = "+id2.size()+";");
                 res.moveToNext();
                 int max = res.getInt(0);
                 db.close();
@@ -155,12 +156,13 @@ public class gomi2Fragment extends Fragment {
                     db3.exec("insert into TextDB(name) values('"+mText+"');");
                     db3.exec("delete from GomiDB where id="+id2.get(i)+";");
                     db3.close();
+
+                    id3.remove(id2.get(i));
                     i++;
                 }
                 id2.clear();
-                gomi2Fragment gomifra = new gomi2Fragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.faragment_area, gomifra);
+                ft.replace(R.id.faragment_area, new gomi2Fragment());
                 ft.addToBackStack(null);
                 ft.commit();
             }
@@ -175,20 +177,22 @@ public class gomi2Fragment extends Fragment {
                 TextDB db = new TextDB(getActivity());
 
                 //クエリーの発行
-                Cursor res = db.query("select id,name from GomiDB where id = (select max(id) from GomiDB);");
+                Cursor res = db.query("select id,name from GomiDB where id = "+id2.size()+";");
                 res.moveToNext();
                 int max = res.getInt(0);
                 db.close();
 
                 while (i < max){
-                    TextDB db3 = new TextDB(getActivity());
-                    db3.exec("delete from GomiDB where id="+id2.get(i)+";");
-                    db3.close();
+                    TextDB db2 = new TextDB(getActivity());
+                    db2.exec("delete from GomiDB where id="+id2.get(i)+";");
+                    db2.close();
+
+                    id3.remove(id2.get(i));
                     i++;
                 }
-                gomi2Fragment gomifra = new gomi2Fragment();
+                id2.clear();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.faragment_area, gomifra);
+                ft.replace(R.id.faragment_area, new gomi2Fragment());
                 ft.addToBackStack(null);
                 ft.commit();
             }

@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +32,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import jp.ac.chiba_fjb.f.home.google.SpreadSheet;
+
+import static com.google.common.collect.ComparisonChain.start;
 import static jp.ac.chiba_fjb.f.home.R.id.TextView;
 import static jp.ac.chiba_fjb.f.home.R.id.menu1;
 import static jp.ac.chiba_fjb.f.home.R.id.menu2;
@@ -40,6 +47,8 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 public class MainActivity extends AppCompatActivity{
     private static String mId;
+    private SpreadSheet mSheet;
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +61,10 @@ public class MainActivity extends AppCompatActivity{
 
         mId = "";
 
-
-
-
-
-
+        //スプレットシートの生成
+        mSheet = new SpreadSheet(MainActivity.this);
+        mSheet.resetAccount();
+        mSheet.connect();
 
 
         //フラグメント表示
@@ -66,12 +74,71 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
+    }
+
+
     //メニュー機能
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.humbergur, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    void start(){
+        //通信用スレッド
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                //スプレッドシートの作成
+                String id = mSheet.create("/ComData/Setting");
+
+                if(id != null){
+                    //データの書き込み
+                    final Object[][] values = {{"あいうえお","かきくけこ"},{"ああああ"},{"=1+2"}};
+                    mSheet.setRange(id,values);
+
+                    //全データの取得
+                    final List<List<Object>> data = mSheet.getRange(id);
+                    System.out.println(data);
+                    System.out.println(data.size());
+                    System.out.println(data.get(0).size());
+
+
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // ここに処理
+                            String str = (String) data.get(0).get(0);
+                            String str1 = (String) data.get(0).get(3);
+                            System.out.println(str);
+                            Toast.makeText(MainActivity.this,str1, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+            }
+        }.start();
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     //メニュー機能(右)
@@ -102,6 +169,10 @@ public class MainActivity extends AppCompatActivity{
 
             case menu4:
                 setTitle("同期");
+                //許可済みか確認
+                if(mSheet.connect())
+                    start();
+
                 return true;
 
             case menu5:
@@ -109,6 +180,7 @@ public class MainActivity extends AppCompatActivity{
                 ft.addToBackStack(null);
                 ft.commit();
                 return true;
+
         }
 
         //メニュー機能(左)
@@ -315,6 +387,15 @@ public class MainActivity extends AppCompatActivity{
             getSupportFragmentManager().popBackStack();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //認証許可情報を設定
+        mSheet.onActivityResult(requestCode, resultCode, data);
+        start();
+    }
+
 
     public String getmId(){
         return mId;

@@ -31,9 +31,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.ac.chiba_fjb.f.home.google.GoogleAccount;
 import jp.ac.chiba_fjb.f.home.google.SpreadSheet;
 
 import static com.google.common.collect.ComparisonChain.start;
@@ -62,9 +64,30 @@ public class MainActivity extends AppCompatActivity{
         mId = "";
 
         //スプレットシートの生成
-        mSheet = new SpreadSheet(MainActivity.this);
-        mSheet.resetAccount();
-        mSheet.connect();
+        mSheet = new SpreadSheet(this);
+       // mSheet.resetAccount();
+        mSheet.execute(new GoogleAccount.GoogleRunnable() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void run() throws IOException {
+                //スプレッドシートの作成
+                String id = mSheet.create("/だいち共有用/SpreadSheet");
+
+                if(id != null){
+                    //データの書き込み
+                    Object[][] values = {{"カテゴリー↓","テキスト↓","※1カテゴリー未入力の場合は「その他」に入ります。\n"+"※2上から順番に入力してください。"}};
+                    mSheet.setRange(id,values);
+
+                    //全データの取得
+                    List<List<Object>> data = mSheet.getRange(id);
+                    System.out.println(data);
+                }
+            }
+        });
 
 
         //フラグメント表示
@@ -72,19 +95,6 @@ public class MainActivity extends AppCompatActivity{
         ft.replace(R.id.faragment_area, fragment);
         ft.commit();
 
-    }
-
-
-
-    @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String html){
-        Spanned result;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(html,Html.FROM_HTML_MODE_COMPACT);
-        } else {
-            result = Html.fromHtml(html);
-        }
-        return result;
     }
 
 
@@ -96,50 +106,6 @@ public class MainActivity extends AppCompatActivity{
         return super.onCreateOptionsMenu(menu);
     }
 
-    void start(){
-        //通信用スレッド
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                //スプレッドシートの作成
-                String id = mSheet.create("/ComData/Setting");
-
-                if(id != null){
-                    //データの書き込み
-                    final Object[][] values = {{"あいうえお","かきくけこ"},{"ああああ"},{"=1+2"}};
-                    mSheet.setRange(id,values);
-
-                    //全データの取得
-                    final List<List<Object>> data = mSheet.getRange(id);
-                    System.out.println(data);
-                    System.out.println(data.size());
-                    System.out.println(data.get(0).size());
-
-
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // ここに処理
-                            String str = (String) data.get(0).get(0);
-                            String str1 = (String) data.get(0).get(3);
-                            System.out.println(str);
-                            Toast.makeText(MainActivity.this,str1, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-            }
-        }.start();
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
 
     //メニュー機能(右)
     @Override
@@ -169,9 +135,46 @@ public class MainActivity extends AppCompatActivity{
 
             case menu4:
                 setTitle("同期");
-                //許可済みか確認
-                if(mSheet.connect())
-                    start();
+                mSheet.execute(new GoogleAccount.GoogleRunnable() {
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void run() throws IOException {
+                        //スプレッドシートの作成
+                        String id = mSheet.create("/だいち共有用/SpreadSheet");
+
+
+
+                        if(id != null){
+                            //全データの取得
+                            final List<List<Object>> data = mSheet.getRange(id);
+                            System.out.println(data);
+                            System.out.println(data.size());
+                            System.out.println(data.get(0).size());
+                            //データベースに接続
+                            TextDB db = new TextDB(MainActivity.this);
+                            db.exec("TRUNCATE TABLE KyoyuDB;");
+                            for(int i=1;i<=data.size();i++){
+                                //データの挿入
+                                db.exec("insert into KyoyuDB(name,name2) values('"+data.get(i).get(0)+"','"+data.get(i).get(1)+"');");
+
+                            }
+
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String str = (String)data.get(0).get(0);
+                                    String str1 = (String)data.get(1).get(1);
+                                    System.out.println(str);
+                                    Toast.makeText(MainActivity.this,str1, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                });
 
                 return true;
 
@@ -393,7 +396,6 @@ public class MainActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         //認証許可情報を設定
         mSheet.onActivityResult(requestCode, resultCode, data);
-        start();
     }
 
 

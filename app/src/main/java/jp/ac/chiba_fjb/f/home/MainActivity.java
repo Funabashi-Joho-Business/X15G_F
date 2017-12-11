@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity{
         return super.onCreateOptionsMenu(menu);
     }
 
+
     //メニュー機能(右)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

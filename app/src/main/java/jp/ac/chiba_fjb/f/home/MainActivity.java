@@ -169,8 +169,13 @@ public class MainActivity extends AppCompatActivity{
                             }
                             TextDB db3 = new TextDB(MainActivity.this);
                             for(int i=1;i<data.size();i++){
-                                //データの挿入
-                                db3.exec("insert into KyoyuDB(name,name2) values('"+data.get(i).get(0)+"','"+data.get(i).get(1)+"');");
+                                String str3 = (String) data.get(i).get(0);
+                                if(str3.isEmpty()){
+                                    db3.exec("insert into KyoyuDB(name,name2) values('その他','"+data.get(i).get(1)+"');");
+                                }else {
+                                    //データの挿入
+                                    db3.exec("insert into KyoyuDB(name,name2) values('" + data.get(i).get(0) + "','" + data.get(i).get(1) + "');");
+                                }
 
                             }
                             db3.close();

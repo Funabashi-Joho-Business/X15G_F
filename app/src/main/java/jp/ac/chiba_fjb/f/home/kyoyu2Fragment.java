@@ -67,7 +67,7 @@ public class kyoyu2Fragment extends Fragment implements View.OnClickListener {
         //データがなくなるまで次の行へ
         while (res.moveToNext()) {
             LinearLayout textlayout;
-            textlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.text, null);
+            textlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.text3, null);
             final TextView textView = (TextView) textlayout.findViewById(R.id.textView);
 
             //0列目を取り出し

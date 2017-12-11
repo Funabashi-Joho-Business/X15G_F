@@ -61,11 +61,11 @@ public class MainActivity extends AppCompatActivity{
 
         homeFragment fragment = new homeFragment();
 
-        mId = "";
+        mId = "menu1";
 
         //スプレットシートの生成
         mSheet = new SpreadSheet(this);
-       // mSheet.resetAccount();
+//        mSheet.resetAccount();
         mSheet.execute(new GoogleAccount.GoogleRunnable() {
             @Override
             public void onError(Exception e) {
@@ -128,13 +128,12 @@ public class MainActivity extends AppCompatActivity{
                 return true;
 
             case menu3:
-                setTitle("痴漢");
+                setTitle("置換");
                 mId = "menu3";
-                Toast.makeText(MainActivity.this, "だいち痴漢モード", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "だいち置換モード", Toast.LENGTH_SHORT).show();
                 return true;
 
             case menu4:
-                setTitle("同期");
                 mSheet.execute(new GoogleAccount.GoogleRunnable() {
                     @Override
                     public void onError(Exception e) {
@@ -156,26 +155,43 @@ public class MainActivity extends AppCompatActivity{
                             System.out.println(data.get(0).size());
                             //データベースに接続
                             TextDB db = new TextDB(MainActivity.this);
-                            db.exec("TRUNCATE TABLE KyoyuDB;");
-                            for(int i=1;i<=data.size();i++){
+                            Cursor res = db.query("select max(id) from KyoyuDB;");
+                            System.out.println(res);
+                            if(res != null) {
+                                res.moveToNext();
+                                int max = res.getInt(0);
+                                db.close();
+                                TextDB db2 = new TextDB(MainActivity.this);
+                                for (int i = 1; i <= max; i++) {
+                                    db2.exec("delete from KyoyuDB where id=" +i+ ";");
+                                }
+                                db2.close();
+                            }
+                            TextDB db3 = new TextDB(MainActivity.this);
+                            for(int i=1;i<data.size();i++){
                                 //データの挿入
-                                db.exec("insert into KyoyuDB(name,name2) values('"+data.get(i).get(0)+"','"+data.get(i).get(1)+"');");
+                                db3.exec("insert into KyoyuDB(name,name2) values('"+data.get(i).get(0)+"','"+data.get(i).get(1)+"');");
 
                             }
+                            db3.close();
 
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                                     String str = (String)data.get(0).get(0);
                                     String str1 = (String)data.get(1).get(1);
                                     System.out.println(str);
-                                    Toast.makeText(MainActivity.this,str1, Toast.LENGTH_SHORT).show();
+                                    ft.replace(R.id.faragment_area, new kyoyuFragment());
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                    Toast.makeText(MainActivity.this,"同期に成功しました", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     }
-                });
 
+                });
                 return true;
 
             case menu5:
@@ -385,10 +401,14 @@ public class MainActivity extends AppCompatActivity{
     //バックボタン処理
     @Override
     public void onBackPressed() {
-        int backStackCnt = getSupportFragmentManager().getBackStackEntryCount();
-        if (backStackCnt != 0) {
-            getSupportFragmentManager().popBackStack();
-        }
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.faragment_area, new homeFragment());
+        ft.addToBackStack(null);
+        ft.commit();
+//        int backStackCnt = getSupportFragmentManager().getBackStackEntryCount();
+//        if (backStackCnt != 0) {
+//            getSupportFragmentManager().popBackStack();
+//        }
     }
 
     @Override

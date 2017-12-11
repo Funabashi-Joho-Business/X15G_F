@@ -27,12 +27,13 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class kyoyuFragment extends Fragment implements View.OnClickListener {
+public class kyoyu2Fragment extends Fragment implements View.OnClickListener {
 
-    private  String strValue01;
+    private String strValue01;
+    private String strValue02;
 
 
-    public kyoyuFragment() {
+    public kyoyu2Fragment() {
         // Required empty public constructor
     }
 
@@ -40,7 +41,7 @@ public class kyoyuFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.kyoyu, container, false);
+        View view = inflater.inflate(R.layout.category, container, false);
         return view;
     }
 
@@ -48,254 +49,103 @@ public class kyoyuFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ImageButton homebutton = (ImageButton) view.findViewById(R.id.homebutton);
-        Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
-        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
+        Button teikeibunbutton = (Button) view.findViewById(R.id.teikeibunbutton);
+        ImageButton gomibakobutton = (ImageButton) view.findViewById(R.id.gomibakobutton);
+        strValue02 = new kyoyuFragment().getSqlstr();
 
-        final kyoyuFragment fragment = new kyoyuFragment();
+        final kyoyu2Fragment fragment = new kyoyu2Fragment();
 
 
         //インスタンスの取得
-        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+        LinearLayout layout = (LinearLayout) view.findViewById(R.id.layout4);
 
         //データベースに接続
         TextDB db = new TextDB(getActivity());
 
         //クエリーの発行
-        Cursor res = db.query("select id,name,name2 from KyoyuDB;");
+        Cursor res = db.query("select id,name,name2 from KyoyuDB where name = '" + strValue02 + "';");
         //データがなくなるまで次の行へ
-        while(res.moveToNext())
-        {
+        while (res.moveToNext()) {
             LinearLayout textlayout;
-            textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
-            final TextView textView = (TextView)textlayout.findViewById(R.id.textView);
+            textlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.text, null);
+            final TextView textView = (TextView) textlayout.findViewById(R.id.textView);
 
             //0列目を取り出し
-            textView.append(res.getString(1));
+            textView.append(res.getString(2));
             textView.setId(res.getInt(0));
 
             layout.addView(textlayout);
-
 
             textView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    String str;
+                    strValue01 = new MainActivity().getmId();
                     final int id = v.getId();
+                    switch (strValue01) {
+                        case "menu1":
+                            TextView textview2 = (TextView) view.findViewById(id);
+                            String cliptext = textview2.getText().toString();
 
-                    //インスタンスの取得
-                    LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+                            //クリップボードに格納するItemを作成
+                            ClipData.Item item = new ClipData.Item(cliptext);
 
-                    //データベースに接続
-                    TextDB db = new TextDB(getActivity());
+                            //MIMETYPEの作成
+                            String[] mimeType = new String[1];
+                            mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
 
-                    //クエリーの発行
-                    Cursor res = db.query("select id,name,name2 from KyoyuDB where id = "+id+";");
-                    res.moveToNext();
-                    str = res.getString(1);
-                    System.out.println(str);
-                    db.close();
+                            //クリップボードに格納するClipDataオブジェクトの作成
+                            ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
 
+                            //クリップボードにデータを格納
+                            ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
+                            cm.setPrimaryClip(cd);
 
-                    TextDB db2 = new TextDB(getActivity());
-                    Cursor res2 = db2.query("select id,name,name2 from KyoyuDB where name = '"+str+"';");
-                    //データがなくなるまで次の行へ
-                    while(res2.moveToNext())
-                    {
-                        LinearLayout textlayout;
-                        textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
-                        final TextView textView = (TextView)textlayout.findViewById(R.id.textView);
-                        ImageButton imageButton = (ImageButton)textlayout.findViewById(R.id.sakuzyo);
+                            Toast.makeText(getActivity(), "「" + cliptext + "」をコピーしました", Toast.LENGTH_SHORT).show();
+                            break;
 
-                        //0列目を取り出し
-                        textView.append(res.getString(2));
-                        textView.setId(res.getInt(0));
-                        imageButton.setId(res.getInt(0));
-                        layout.addView(textlayout);
+                        case "menu2":
+                            final EditText editView2 = new EditText(getActivity());
+                            final LinearLayout layout = (LinearLayout) view.findViewById(R.id.layout4);
+                            //データベースに接続
+                            TextDB db = new TextDB(getActivity());
+                            //データの取得
+                            Cursor res = db.query("select id,name,name2 from KyoyuDB where id = " + id + ";");
+                            res.moveToNext();
 
-                        imageButton.setOnClickListener(new View.OnClickListener() {
+                            editView2.setText(res.getString(2));
+                            db.close();
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("編集")
+                                    .setView(editView2)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                            kyoyuFragment fragment = new kyoyuFragment();
+                                            String str2 = editView2.getText().toString();
 
-                            @Override
-                            public void onClick(View v) {
-                                int id = v.getId();
-                                //データベースに接続
-                                TextDB db = new TextDB(getActivity());
-                                Cursor res = db.query("select id,name,name2 from KyoyuDB where id = "+id+";");
-                                res.moveToNext();
-                                String mGomi = res.getString(2);
-                                db.close();
+                                            //データベースに接続
+                                            TextDB db = new TextDB(getActivity());
+                                            db.exec("update kyoyuDB set name2 = '" + str2 + "' where id=" + id + ";");
 
-                                //データベースに接続
-                                TextDB db2 = new TextDB(getActivity());
-                                db2.exec("insert into GomiDB(name) values('"+mGomi+"');");
-                                db2.exec("delete from KyoyuDB where id="+id+";");
-                                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                ft.replace(R.id.faragment_area, fragment);
-                                ft.addToBackStack(null);
-                                ft.commit();
-                                db2.close();
-
-
-//                    int id = v.getId();
-//                    TextDB db = new TextDB(getActivity());
-//                    db.exec("delete from TextDB where id="+id+";");
-//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                    homeFragment fragment = new homeFragment();
-//                    ft.replace(R.id.faragment_area, fragment);
-//                    ft.addToBackStack(null);
-//                    ft.commit();
-//                    db.close();
+                                            ft.replace(R.id.faragment_area, fragment);
+                                            ft.addToBackStack(null);
+                                            ft.commit();
+                                            db.close();
 
 
-                            }
-                        });
-
-                        textView.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View v) {
-                                strValue01 = new MainActivity().getmId();
-                                final int id = v.getId();
-                                switch (strValue01) {
-                                    case "menu1":
-                                        TextView textview2 = (TextView) view.findViewById(id);
-                                        String cliptext = textview2.getText().toString();
-
-                                        //クリップボードに格納するItemを作成
-                                        ClipData.Item item = new ClipData.Item(cliptext);
-
-                                        //MIMETYPEの作成
-                                        String[] mimeType = new String[1];
-                                        mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
-
-                                        //クリップボードに格納するClipDataオブジェクトの作成
-                                        ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
-
-                                        //クリップボードにデータを格納
-                                        ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
-                                        cm.setPrimaryClip(cd);
-
-                                        Toast.makeText(getActivity(), "「" + cliptext + "」をコピーしました", Toast.LENGTH_SHORT).show();
-                                        break;
-
-                                    case "menu2":
-                                        final EditText editView2 = new EditText(getActivity());
-                                        final LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
-                                        //データベースに接続
-                                        TextDB db = new TextDB(getActivity());
-                                        //データの取得
-                                        Cursor res = db.query("select id,name,name2 from KyoyuDB where id = "+id+";");
-                                        res.moveToNext();
-
-                                        editView2.setText(res.getString(2));
-                                        db.close();
-                                        new AlertDialog.Builder(getActivity())
-                                                .setTitle("編集")
-                                                .setView(editView2)
-                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                                        kyoyuFragment fragment = new kyoyuFragment();
-                                                        String str2 = editView2.getText().toString();
-
-                                                        //データベースに接続
-                                                        TextDB db = new TextDB(getActivity());
-                                                        db.exec("update kyoyuDB set name2 = '"+str2+"' where id="+id+";");
-
-                                                        ft.replace(R.id.faragment_area, fragment);
-                                                        ft.addToBackStack(null);
-                                                        ft.commit();
-                                                        db.close();
+                                        }
+                                    })
+                                    .setNegativeButton("キャンセル", null)
+                                    .show();
+                            break;
 
 
-                                                    }
-                                                })
-                                                .setNegativeButton("キャンセル",null)
-                                                .show();
-                                        break;
-
-
-
-                                    default:
-                                        Toast.makeText(getActivity(), "選択してください", Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
-                            }
-                        });
-
+                        default:
+                            Toast.makeText(getActivity(), "選択してください", Toast.LENGTH_SHORT).show();
+                            break;
                     }
-                    //カーソルを閉じる
-                    res2.close();
-                    //データベースを閉じる
-                    db2.close();
-//                    strValue01 = new MainActivity().getmId();
-//                    final int id = v.getId();
-//                    switch (strValue01) {
-//                        case "menu1":
-//                            TextView textview2 = (TextView) view.findViewById(id);
-//                            String cliptext = textview2.getText().toString();
-//
-//                            //クリップボードに格納するItemを作成
-//                            ClipData.Item item = new ClipData.Item(cliptext);
-//
-//                            //MIMETYPEの作成
-//                            String[] mimeType = new String[1];
-//                            mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
-//
-//                            //クリップボードに格納するClipDataオブジェクトの作成
-//                            ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
-//
-//                            //クリップボードにデータを格納
-//                            ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(CLIPBOARD_SERVICE);
-//                            cm.setPrimaryClip(cd);
-//
-//                            Toast.makeText(getActivity(), "「" + cliptext + "」をコピーしました", Toast.LENGTH_SHORT).show();
-//                            break;
-//
-//                        case "menu2":
-//                            final EditText editView2 = new EditText(getActivity());
-//                            final LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
-//                            //データベースに接続
-//                            TextDB db = new TextDB(getActivity());
-//                            //データの取得
-//                            Cursor res = db.query("select id,name,name2 from KyoyuDB where id = "+id+";");
-//                            res.moveToNext();
-//
-//                            editView2.setText(res.getString(2));
-//                            db.close();
-//                            new AlertDialog.Builder(getActivity())
-//                                    .setTitle("編集")
-//                                    .setView(editView2)
-//                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                                            kyoyuFragment fragment = new kyoyuFragment();
-//                                            String str2 = editView2.getText().toString();
-//
-//                                            //データベースに接続
-//                                            TextDB db = new TextDB(getActivity());
-//                                            db.exec("update kyoyuDB set name2 = '"+str2+"' where id="+id+";");
-//
-//                                            ft.replace(R.id.faragment_area, fragment);
-//                                            ft.addToBackStack(null);
-//                                            ft.commit();
-//                                            db.close();
-//
-//
-//                                        }
-//                                    })
-//                                    .setNegativeButton("キャンセル",null)
-//                                    .show();
-//                            break;
-//
-//
-//
-//                        default:
-//                            Toast.makeText(getActivity(), "選択してください", Toast.LENGTH_SHORT).show();
-//                            break;
-//                    }
 
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.faragment_area, fragment);

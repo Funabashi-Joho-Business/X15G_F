@@ -47,7 +47,6 @@ public class homeFragment extends Fragment  {
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
-        getActivity().setTitle("だいちのはさみ");
         super.onViewCreated(view, savedInstanceState);
         Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);

@@ -22,6 +22,8 @@ public  class TextDB extends SQlite{
         db.execSQL("create table TextDB(id integer primary key,name text);");
         db.execSQL("create table GomiDB(id integer primary key,name text);");
         db.execSQL("create table KyoyuDB(id integer primary key,name text,name2 text);");
+//        db.execSQL("create table TeikeibunDB(id integer primary key,name text,name2 text);");
+//        db.execSQL("insert into TeikeibunDB(name,name2) values('','');");
 
 
 

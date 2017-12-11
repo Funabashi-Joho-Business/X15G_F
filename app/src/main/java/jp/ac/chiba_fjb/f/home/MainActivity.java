@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,8 +31,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import jp.ac.chiba_fjb.f.home.google.GoogleAccount;
+import jp.ac.chiba_fjb.f.home.google.SpreadSheet;
+
+import static com.google.common.collect.ComparisonChain.start;
 import static jp.ac.chiba_fjb.f.home.R.id.TextView;
 import static jp.ac.chiba_fjb.f.home.R.id.menu1;
 import static jp.ac.chiba_fjb.f.home.R.id.menu2;
@@ -40,6 +49,8 @@ import static jp.ac.chiba_fjb.f.home.R.id.menu5;
 
 public class MainActivity extends AppCompatActivity{
     private static String mId;
+    private SpreadSheet mSheet;
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +61,33 @@ public class MainActivity extends AppCompatActivity{
 
         homeFragment fragment = new homeFragment();
 
-        mId = "";
+        mId = "menu1";
 
+        //スプレットシートの生成
+        mSheet = new SpreadSheet(this);
+//        mSheet.resetAccount();
+        mSheet.execute(new GoogleAccount.GoogleRunnable() {
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
 
+            @Override
+            public void run() throws IOException {
+                //スプレッドシートの作成
+                String id = mSheet.create("/だいち共有用/SpreadSheet");
 
+                if(id != null){
+                    //データの書き込み
+                    Object[][] values = {{"カテゴリー↓","テキスト↓","※1カテゴリー未入力の場合は「その他」に入ります。\n"+"※2上から順番に入力してください。"}};
+                    mSheet.setRange(id,values);
 
-
-
+                    //全データの取得
+                    List<List<Object>> data = mSheet.getRange(id);
+                    System.out.println(data);
+                }
+            }
+        });
 
 
         //フラグメント表示
@@ -66,6 +97,7 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+
     //メニュー機能
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,6 +105,7 @@ public class MainActivity extends AppCompatActivity{
         inflater.inflate(R.menu.humbergur, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     //メニュー機能(右)
     @Override
@@ -95,13 +128,70 @@ public class MainActivity extends AppCompatActivity{
                 return true;
 
             case menu3:
-                setTitle("痴漢");
+                setTitle("置換");
                 mId = "menu3";
-                Toast.makeText(MainActivity.this, "だいち痴漢モード", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "だいち置換モード", Toast.LENGTH_SHORT).show();
                 return true;
 
             case menu4:
-                setTitle("同期");
+                mSheet.execute(new GoogleAccount.GoogleRunnable() {
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void run() throws IOException {
+                        //スプレッドシートの作成
+                        String id = mSheet.create("/だいち共有用/SpreadSheet");
+
+
+
+                        if(id != null){
+                            //全データの取得
+                            final List<List<Object>> data = mSheet.getRange(id);
+                            System.out.println(data);
+                            System.out.println(data.size());
+                            System.out.println(data.get(0).size());
+                            //データベースに接続
+                            TextDB db = new TextDB(MainActivity.this);
+                            Cursor res = db.query("select max(id) from KyoyuDB;");
+                            System.out.println(res);
+                            if(res != null) {
+                                res.moveToNext();
+                                int max = res.getInt(0);
+                                db.close();
+                                TextDB db2 = new TextDB(MainActivity.this);
+                                for (int i = 1; i <= max; i++) {
+                                    db2.exec("delete from KyoyuDB where id=" +i+ ";");
+                                }
+                                db2.close();
+                            }
+                            TextDB db3 = new TextDB(MainActivity.this);
+                            for(int i=1;i<data.size();i++){
+                                //データの挿入
+                                db3.exec("insert into KyoyuDB(name,name2) values('"+data.get(i).get(0)+"','"+data.get(i).get(1)+"');");
+
+                            }
+                            db3.close();
+
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                    String str = (String)data.get(0).get(0);
+                                    String str1 = (String)data.get(1).get(1);
+                                    System.out.println(str);
+                                    ft.replace(R.id.faragment_area, new kyoyuFragment());
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                    Toast.makeText(MainActivity.this,"同期に成功しました", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+
+                });
                 return true;
 
             case menu5:
@@ -109,6 +199,7 @@ public class MainActivity extends AppCompatActivity{
                 ft.addToBackStack(null);
                 ft.commit();
                 return true;
+
         }
 
         //メニュー機能(左)
@@ -310,11 +401,23 @@ public class MainActivity extends AppCompatActivity{
     //バックボタン処理
     @Override
     public void onBackPressed() {
-        int backStackCnt = getSupportFragmentManager().getBackStackEntryCount();
-        if (backStackCnt != 0) {
-            getSupportFragmentManager().popBackStack();
-        }
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.faragment_area, new homeFragment());
+        ft.addToBackStack(null);
+        ft.commit();
+//        int backStackCnt = getSupportFragmentManager().getBackStackEntryCount();
+//        if (backStackCnt != 0) {
+//            getSupportFragmentManager().popBackStack();
+//        }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //認証許可情報を設定
+        mSheet.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     public String getmId(){
         return mId;

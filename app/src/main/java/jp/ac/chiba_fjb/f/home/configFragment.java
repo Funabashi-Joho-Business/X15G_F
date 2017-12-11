@@ -41,7 +41,6 @@ public class configFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
-        getActivity().setTitle("設定");
         super.onViewCreated(view, savedInstanceState);
         final CheckBox chkbox = (CheckBox) view.findViewById(R.id.checkBox);
 

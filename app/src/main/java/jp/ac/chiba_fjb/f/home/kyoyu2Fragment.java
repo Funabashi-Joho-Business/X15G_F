@@ -1,7 +1,6 @@
 package jp.ac.chiba_fjb.f.home;
 
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -28,91 +27,54 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class homeFragment extends Fragment  {
+public class kyoyu2Fragment extends Fragment implements View.OnClickListener {
 
-    private  String strValue01;
+    private String strValue01;
+    private String strValue02;
 
-    public homeFragment() {
+
+    public kyoyu2Fragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.home, container, false);
+        View view = inflater.inflate(R.layout.category, container, false);
+        return view;
     }
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
-        Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
-        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
+        ImageButton homebutton = (ImageButton) view.findViewById(R.id.homebutton);
+        Button teikeibunbutton = (Button) view.findViewById(R.id.teikeibunbutton);
+        ImageButton gomibakobutton = (ImageButton) view.findViewById(R.id.gomibakobutton);
+        strValue02 = new kyoyuFragment().getSqlstr();
 
-        homeFragment fragment = new homeFragment();
+        final kyoyu2Fragment fragment = new kyoyu2Fragment();
 
 
         //インスタンスの取得
-        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+        LinearLayout layout = (LinearLayout) view.findViewById(R.id.layout4);
 
         //データベースに接続
         TextDB db = new TextDB(getActivity());
 
         //クエリーの発行
-        Cursor res = db.query("select id,name from TextDB;");
+        Cursor res = db.query("select id,name,name2 from KyoyuDB where name = '" + strValue02 + "';");
         //データがなくなるまで次の行へ
-        while(res.moveToNext())
-        {
+        while (res.moveToNext()) {
             LinearLayout textlayout;
-            textlayout = (LinearLayout)getActivity().getLayoutInflater().inflate(R.layout.text, null);
-            final TextView textView = (TextView)textlayout.findViewById(R.id.textView);
-            ImageButton imageButton = (ImageButton)textlayout.findViewById(R.id.sakuzyo);
+            textlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.text, null);
+            final TextView textView = (TextView) textlayout.findViewById(R.id.textView);
 
             //0列目を取り出し
-            textView.append(res.getString(1));
+            textView.append(res.getString(2));
             textView.setId(res.getInt(0));
-            imageButton.setId(res.getInt(0));
+
             layout.addView(textlayout);
-
-            imageButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    int id = v.getId();
-                    //データベースに接続
-                    TextDB db = new TextDB(getActivity());
-                    Cursor res = db.query("select id,name from TextDB where id = "+id+";");
-                    res.moveToNext();
-                    String mGomi = res.getString(1);
-                    db.close();
-
-                    //データベースに接続
-                    TextDB db2 = new TextDB(getActivity());
-                    db2.exec("insert into GomiDB(name) values('"+mGomi+"');");
-                    db2.exec("delete from TextDB where id="+id+";");
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.replace(R.id.faragment_area, new homeFragment());
-                    ft.addToBackStack(null);
-                    ft.commit();
-                    db2.close();
-
-
-//                    int id = v.getId();
-//                    TextDB db = new TextDB(getActivity());
-//                    db.exec("delete from TextDB where id="+id+";");
-//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                    homeFragment fragment = new homeFragment();
-//                    ft.replace(R.id.faragment_area, fragment);
-//                    ft.addToBackStack(null);
-//                    ft.commit();
-//                    db.close();
-
-
-                    }
-            });
 
             textView.setOnClickListener(new View.OnClickListener() {
 
@@ -144,14 +106,14 @@ public class homeFragment extends Fragment  {
 
                         case "menu2":
                             final EditText editView2 = new EditText(getActivity());
-                            final LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+                            final LinearLayout layout = (LinearLayout) view.findViewById(R.id.layout4);
                             //データベースに接続
                             TextDB db = new TextDB(getActivity());
                             //データの取得
-                            Cursor res = db.query("select id,name from TextDB where id = "+id+";");
+                            Cursor res = db.query("select id,name,name2 from KyoyuDB where id = " + id + ";");
                             res.moveToNext();
 
-                            editView2.setText(res.getString(1));
+                            editView2.setText(res.getString(2));
                             db.close();
                             new AlertDialog.Builder(getActivity())
                                     .setTitle("編集")
@@ -160,12 +122,12 @@ public class homeFragment extends Fragment  {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             FragmentTransaction ft = getFragmentManager().beginTransaction();
-                                            homeFragment fragment = new homeFragment();
+                                            kyoyuFragment fragment = new kyoyuFragment();
                                             String str2 = editView2.getText().toString();
 
                                             //データベースに接続
                                             TextDB db = new TextDB(getActivity());
-                                            db.exec("update TextDB set name = '"+str2+"' where id="+id+";");
+                                            db.exec("update kyoyuDB set name2 = '" + str2 + "' where id=" + id + ";");
 
                                             ft.replace(R.id.faragment_area, fragment);
                                             ft.addToBackStack(null);
@@ -175,16 +137,20 @@ public class homeFragment extends Fragment  {
 
                                         }
                                     })
-                                    .setNegativeButton("キャンセル",null)
+                                    .setNegativeButton("キャンセル", null)
                                     .show();
                             break;
-
 
 
                         default:
                             Toast.makeText(getActivity(), "選択してください", Toast.LENGTH_SHORT).show();
                             break;
                     }
+
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.faragment_area, fragment);
+                    ft.addToBackStack(null);
+                    ft.commit();
                 }
             });
 
@@ -194,10 +160,12 @@ public class homeFragment extends Fragment  {
         //データベースを閉じる
         db.close();
 
-        kyouyubutton.setOnClickListener(new View.OnClickListener() {
+
+        homebutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.faragment_area, new kyoyuFragment());
+                homeFragment fragment = new homeFragment();
+                ft.replace(R.id.faragment_area, fragment);
                 ft.addToBackStack(null);
                 ft.commit();
             }
@@ -220,7 +188,10 @@ public class homeFragment extends Fragment  {
                 ft.commit();
             }
         });
-
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
 }

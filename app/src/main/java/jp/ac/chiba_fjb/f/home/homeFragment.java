@@ -48,15 +48,15 @@ public class homeFragment extends Fragment  {
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
-        Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton);
-        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton);
+        Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton1);
+        Button teikeibunbutton = (Button)view.findViewById(R.id.teikeibunbutton1);
+        ImageButton gomibakobutton = (ImageButton)view.findViewById(R.id.gomibakobutton1);
 
         homeFragment fragment = new homeFragment();
 
 
         //インスタンスの取得
-        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout6);
 
         //データベースに接続
         TextDB db = new TextDB(getActivity());
@@ -144,7 +144,7 @@ public class homeFragment extends Fragment  {
 
                         case "menu2":
                             final EditText editView2 = new EditText(getActivity());
-                            final LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout4);
+                            final LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout6);
                             //データベースに接続
                             TextDB db = new TextDB(getActivity());
                             //データの取得

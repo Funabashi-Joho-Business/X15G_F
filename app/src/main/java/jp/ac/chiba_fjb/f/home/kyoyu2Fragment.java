@@ -51,6 +51,7 @@ public class kyoyu2Fragment extends Fragment implements View.OnClickListener {
         ImageButton homebutton = (ImageButton) view.findViewById(R.id.homebutton);
         Button teikeibunbutton = (Button) view.findViewById(R.id.teikeibunbutton);
         ImageButton gomibakobutton = (ImageButton) view.findViewById(R.id.gomibakobutton);
+        Button kyouyubutton = (Button)view.findViewById(R.id.kyouyubutton);
         strValue02 = new kyoyuFragment().getSqlstr();
 
         final kyoyu2Fragment fragment = new kyoyu2Fragment();
@@ -184,6 +185,15 @@ public class kyoyu2Fragment extends Fragment implements View.OnClickListener {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.faragment_area, new gomi2Fragment());
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
+        kyouyubutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.faragment_area, new kyoyuFragment());
                 ft.addToBackStack(null);
                 ft.commit();
             }

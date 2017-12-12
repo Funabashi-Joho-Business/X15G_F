@@ -14,7 +14,7 @@
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/layout4"
+            android:id="@+id/layout6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"></LinearLayout>
@@ -29,7 +29,7 @@
         tools:layout_editor_absoluteY="8dp">
 
         <ImageButton
-            android:id="@+id/homebutton"
+            android:id="@+id/homebutton1"
             android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_weight="1.00"
@@ -39,7 +39,7 @@
             tools:layout_editor_absoluteY="326dp" />
 
         <Button
-            android:id="@+id/kyouyubutton"
+            android:id="@+id/kyouyubutton1"
             android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_weight="1"
@@ -48,7 +48,7 @@
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/teikeibunbutton"
+            android:id="@+id/teikeibunbutton1"
             android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_weight="1"
@@ -57,7 +57,7 @@
             android:textColor="@color/white" />
 
         <ImageButton
-            android:id="@+id/gomibakobutton"
+            android:id="@+id/gomibakobutton1"
             android:layout_width="wrap_content"
             android:layout_height="39dp"
             android:layout_gravity="right"

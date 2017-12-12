@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity{
 
         //スプレットシートの生成
         mSheet = new SpreadSheet(this);
-//        mSheet.resetAccount();
+        mSheet.resetAccount();
         mSheet.execute(new GoogleAccount.GoogleRunnable() {
             @Override
             public void onError(Exception e) {
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        homeFragment fragment = new homeFragment();
+        final homeFragment fragment = new homeFragment();
 
 
         switch (item.getItemId()) {
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity{
         //メニュー機能(左)
         if (android.R.id.home == item.getItemId()) {
             final EditText editView = new EditText(MainActivity.this);
-            final LinearLayout layout = (LinearLayout)findViewById(R.id.layout4);
+            final LinearLayout layout = (LinearLayout)findViewById(R.id.layout6);
             new AlertDialog.Builder(this)
                     .setTitle("新規テキスト入力")
                     .setView(editView)
@@ -236,7 +236,15 @@ public class MainActivity extends AppCompatActivity{
                                 textView.append(res.getString(1));
                                 textView.setId(res.getInt(0));
                                 imageButton.setId(res.getInt(0));
-                                layout.addView(textlayout);
+                                try{
+                                    layout.addView(textlayout);
+                                }catch (NullPointerException e){
+                                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                    ft.replace(R.id.faragment_area, new homeFragment());
+                                    ft.addToBackStack(null);
+                                    ft.commit();
+                                }
+
 
 
 
@@ -299,7 +307,7 @@ public class MainActivity extends AppCompatActivity{
 
                                             case "menu2":
                                                 final EditText editView2 = new EditText(MainActivity.this);
-                                                final LinearLayout layout = (LinearLayout)findViewById(R.id.layout4);
+                                                final LinearLayout layout = (LinearLayout)findViewById(R.id.layout6);
                                                 //データベースに接続
                                                 TextDB db = new TextDB(MainActivity.this);
                                                 //データの取得

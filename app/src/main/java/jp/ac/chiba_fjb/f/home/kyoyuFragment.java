@@ -6,6 +6,7 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -74,9 +75,11 @@ public class kyoyuFragment extends Fragment {
            if(!a.contains(res.getString(1))) {
                a.add(res.getString(1));
                 LinearLayout textlayout;
-                textlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.text3, null);
+                textlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.text4, null);
                 final TextView textView = (TextView) textlayout.findViewById(R.id.textView);
                textView.setTypeface(Typeface.DEFAULT_BOLD);
+
+
 
                 //0列目を取り出し
                 textView.append(res.getString(1));
@@ -153,6 +156,7 @@ public class kyoyuFragment extends Fragment {
                 ft.commit();
             }
         });
+
     }
 
     public String getSqlstr(){

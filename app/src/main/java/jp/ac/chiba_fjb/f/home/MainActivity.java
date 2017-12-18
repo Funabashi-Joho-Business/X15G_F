@@ -8,6 +8,8 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity{
     private static String mId;
     private SpreadSheet mSheet;
     Handler mHandler = new Handler();
+    final static int OVERLAY_PERMISSION_REQ_CODE = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +66,17 @@ public class MainActivity extends AppCompatActivity{
 
         mId = "menu1";
 
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+        }
+        else
+            startService(new Intent(this, LayerService.class).setAction("START"));
+
         //スプレットシートの生成
         mSheet = new SpreadSheet(this);
-        mSheet.resetAccount();
+//        mSheet.resetAccount();
         mSheet.execute(new GoogleAccount.GoogleRunnable() {
             @Override
             public void onError(Exception e) {
@@ -88,6 +99,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
         });
+
 
 
         //フラグメント表示
@@ -427,13 +439,22 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 123) {
+            if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+                startService(new Intent(this, LayerService.class).setAction("START"));
+
+            }
+        }
+
         //認証許可情報を設定
         mSheet.onActivityResult(requestCode, resultCode, data);
+
     }
 
 
     public String getmId(){
         return mId;
     }
+
 
 }

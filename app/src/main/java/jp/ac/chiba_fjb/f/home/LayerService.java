@@ -22,6 +22,7 @@ public class LayerService extends Service implements View.OnTouchListener {
     private int LAYOUT_FLAG;
     private int oldx;
     private int oldy;
+    private Point desplaysize;
     public LayerService() {
     }
 
@@ -36,7 +37,7 @@ public class LayerService extends Service implements View.OnTouchListener {
     }
     void showLayer(){
         // Viewからインフレータを作成する
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final LayoutInflater layoutInflater = LayoutInflater.from(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -55,7 +56,7 @@ public class LayerService extends Service implements View.OnTouchListener {
                       | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
               PixelFormat.TRANSPARENT);
 
-//        promisu =params;
+        promisu =params;
 
 
         // WindowManagerを取得する
@@ -70,6 +71,8 @@ public class LayerService extends Service implements View.OnTouchListener {
             public void onClick(View view) {
                 TextView textView = mView.findViewById(R.id.textView);
                 textView.setText("ボタンが押されました");
+                removeLayer();
+
             }
         });
 
@@ -85,6 +88,8 @@ public class LayerService extends Service implements View.OnTouchListener {
         //スクリーンサイズの取得
         Point screenSize = new Point();
         wm.getDefaultDisplay().getSize(screenSize);
+
+        desplaysize = screenSize;
 
         //0,0が中心位置の設定なので、左上を0,0に補正する為の値
         int baseX = -(screenSize.x-width)/2;
@@ -132,7 +137,6 @@ public class LayerService extends Service implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
 
         // WindowManagerを取得する
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
@@ -143,19 +147,15 @@ public class LayerService extends Service implements View.OnTouchListener {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                // 今回イベントでのView移動先の位置
-                int left = droplayer.getLeft() + (x - oldx);
-                int top = droplayer.getTop() + (y - oldy);
-                // Viewを移動する
-                droplayer.layout(left, top, left + droplayer.getWidth(), top
-                        + droplayer.getHeight());
+                int left = x -(desplaysize.x / 2);
+                int top = y -(desplaysize.y / 2);
 
-                params.x = left;
-                params.y = top;
+                promisu.x = left;
+                promisu.y = top;
 
                 break;
         }
-        wm.updateViewLayout(mView, params);
+        wm.updateViewLayout(mView, promisu);
 
         // 今回のタッチ位置を保持
         oldx = x;

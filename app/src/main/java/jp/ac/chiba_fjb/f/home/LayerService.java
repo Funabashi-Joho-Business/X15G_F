@@ -72,7 +72,6 @@ public class LayerService extends Service implements View.OnTouchListener {
                 TextView textView = mView.findViewById(R.id.textView);
                 textView.setText("ボタンが押されました");
                 removeLayer();
-
             }
         });
 

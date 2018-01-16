@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -43,6 +42,7 @@ public class configFragment extends Fragment {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final CheckBox chkbox = (CheckBox) view.findViewById(R.id.checkBox);
+        final LayerService layerService = new LayerService();
 
         //チェック状態確認
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -52,8 +52,8 @@ public class configFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Intent notificationIntent = new Intent(getActivity(), MainActivity.class);
-                PendingIntent contentIntent = PendingIntent.getActivity(getActivity(),0,notificationIntent,0);
+                Intent notificationIntent = new Intent(getActivity(),LayerService.class);
+                PendingIntent contentIntent = PendingIntent.getService(getActivity(),0,notificationIntent,0);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getActivity());
                 // 左端に表示されるアイコン
                 builder.setSmallIcon(R.drawable.ic_launther);

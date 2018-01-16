@@ -70,7 +70,7 @@ public class LayerService extends Service implements View.OnTouchListener {
             @Override
             public void onClick(View view) {
                 TextView textView = mView.findViewById(R.id.textView);
-                textView.setText("ボタンが押されました");
+                //textView.setText("ボタンが押されました");
                 removeLayer();
             }
         });
@@ -105,7 +105,7 @@ public class LayerService extends Service implements View.OnTouchListener {
     public void onCreate() {
         super.onCreate();
         System.out.println("サービス開始");
-        showLayer();
+
 
 
     }
@@ -120,6 +120,7 @@ public class LayerService extends Service implements View.OnTouchListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        showLayer();
         if(intent!=null) {
             if (intent.getAction() == null)
                 return super.onStartCommand(intent, flags, startId);

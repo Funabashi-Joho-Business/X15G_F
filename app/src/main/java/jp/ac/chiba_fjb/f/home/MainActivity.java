@@ -66,13 +66,13 @@ public class MainActivity extends AppCompatActivity{
 
         mId = "menu1";
 
-        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
-        }
-        else
-            startService(new Intent(this, LayerService.class).setAction("START"));
+//        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+//            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+//                    Uri.parse("package:" + getPackageName()));
+//            startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+//        }
+//        else
+//            startService(new Intent(this, LayerService.class).setAction("START"));
 
         //スプレットシートの生成
         mSheet = new SpreadSheet(this);

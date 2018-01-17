@@ -20,7 +20,10 @@
             android:background="@drawable/wakusen"
             android:gravity="center_vertical"
             android:padding="6dp"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
+            android:singleLine="true"/>
 
     </FrameLayout>
 

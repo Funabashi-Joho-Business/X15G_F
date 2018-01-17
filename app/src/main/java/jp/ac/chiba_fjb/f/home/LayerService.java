@@ -151,7 +151,7 @@ public class LayerService extends Service implements View.OnTouchListener {
                 int top = y -(desplaysize.y / 2);
 
                 promisu.x = left;
-                promisu.y = top;
+                promisu.y = top+260;
 
                 break;
         }

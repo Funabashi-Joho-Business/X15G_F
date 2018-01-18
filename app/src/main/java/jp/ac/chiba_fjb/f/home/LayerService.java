@@ -1,30 +1,40 @@
 package jp.ac.chiba_fjb.f.home;
 
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class LayerService extends Service implements View.OnTouchListener {
     private View mView;
+    private View textlayout;
     private LinearLayout droplayer;
     private WindowManager.LayoutParams promisu;
     private int LAYOUT_FLAG;
     private int oldx;
     private int oldy;
     private Point desplaysize;
+    private  MainActivity main = new MainActivity();
     public LayerService() {
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -65,6 +75,50 @@ public class LayerService extends Service implements View.OnTouchListener {
         mView = layoutInflater.inflate(R.layout.layer, null);
         droplayer = mView.findViewById(R.id.layerlayout);
         droplayer.setOnTouchListener(this);
+        //インスタンスの取得
+        LinearLayout layout = (LinearLayout)mView.findViewById(R.id.layout8);
+
+        //データベースに接続
+        TextDB db = new TextDB(LayerService.this);
+
+        //クエリーの発行
+        Cursor res = db.query("select id,name from TextDB;");
+        while(res.moveToNext()) {
+            textlayout = layoutInflater.inflate(R.layout.text5, null);
+            final TextView textView = (TextView) textlayout.findViewById(R.id.textView);
+
+            //0列目を取り出し
+            textView.append(res.getString(1));
+            textView.setId(res.getInt(0));
+            layout.addView(textlayout);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final int id = v.getId();
+                    TextView textview2 = (TextView) mView.findViewById(id);
+                    String cliptext = textview2.getText().toString();
+
+                    //クリップボードに格納するItemを作成
+                    ClipData.Item item = new ClipData.Item(cliptext);
+
+                    //MIMETYPEの作成
+                    String[] mimeType = new String[1];
+                    mimeType[0] = ClipDescription.MIMETYPE_TEXT_URILIST;
+
+                    //クリップボードに格納するClipDataオブジェクトの作成
+                    ClipData cd = new ClipData(new ClipDescription("text_data", mimeType), item);
+
+                    //クリップボードにデータを格納
+                    ClipboardManager cm = (ClipboardManager) LayerService.this.getSystemService(CLIPBOARD_SERVICE);
+                    cm.setPrimaryClip(cd);
+
+                    Toast.makeText(LayerService.this, "「" + cliptext + "」をコピーしました", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            db.close();
+        }
         //イベントサンプル
         mView.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +126,9 @@ public class LayerService extends Service implements View.OnTouchListener {
                 TextView textView = mView.findViewById(R.id.textView);
                 //textView.setText("ボタンが押されました");
                 removeLayer();
+
+
+
             }
         });
 

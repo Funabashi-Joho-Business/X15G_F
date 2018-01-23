@@ -32,6 +32,7 @@ public class LayerService extends Service implements View.OnTouchListener {
     private int oldy;
     private Point desplaysize;
     private  MainActivity main = new MainActivity();
+    private int count;
     public LayerService() {
     }
 
@@ -125,6 +126,7 @@ public class LayerService extends Service implements View.OnTouchListener {
             public void onClick(View view) {
                 TextView textView = mView.findViewById(R.id.textView);
                 //textView.setText("ボタンが押されました");
+                count = 0;
                 removeLayer();
 
 
@@ -160,8 +162,10 @@ public class LayerService extends Service implements View.OnTouchListener {
     }
     @Override
     public void onCreate() {
-        super.onCreate();
-        System.out.println("サービス開始");
+        if(count != 1) {
+            super.onCreate();
+            System.out.println("サービス開始");
+        }
 
 
 
@@ -170,6 +174,7 @@ public class LayerService extends Service implements View.OnTouchListener {
     @Override
     public void onDestroy() {
         System.out.println("サービス停止");
+
         removeLayer();
 
         super.onDestroy();
@@ -177,17 +182,21 @@ public class LayerService extends Service implements View.OnTouchListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        showLayer();
-        if(intent!=null) {
-            if (intent.getAction() == null)
-                return super.onStartCommand(intent, flags, startId);
-            ;
-            switch (intent.getAction()) {
-                case "START":
-                    break;
-                case "STOP":
-                    break;
-            }
+
+        if(count != 1) {
+            count = 1;
+            showLayer();
+//            if (intent != null) {
+//                if (intent.getAction() == null)
+//                    return super.onStartCommand(intent, flags, startId);
+//                switch (intent.getAction()) {
+//                    case "START":
+//                        count = 1;
+//                        break;
+//                    case "STOP":
+//                        break;
+//                }
+//            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

@@ -10,13 +10,21 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+
+import jp.ac.chiba_fjb.f.home.google.GoogleAccount;
+import jp.ac.chiba_fjb.f.home.google.SpreadSheet;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -25,6 +33,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  * A simple {@link Fragment} subclass.
  */
 public class configFragment extends Fragment {
+    private SpreadSheet mSheet;
 
 
     public configFragment() {
@@ -43,6 +52,7 @@ public class configFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final CheckBox chkbox = (CheckBox) view.findViewById(R.id.checkBox);
         final LayerService layerService = new LayerService();
+        Button btn = (Button)view.findViewById(R.id.button3);
 
         //チェック状態確認
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -91,6 +101,39 @@ public class configFragment extends Fragment {
               }
             }
 
+        });
+
+        btn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                //スプレットシートの生成
+                mSheet = new SpreadSheet(getActivity());
+                mSheet.resetAccount();
+                mSheet.execute(new GoogleAccount.GoogleRunnable() {
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void run() throws IOException {
+                        //スプレッドシートの作成
+                        String id = mSheet.create("/だいち共有用/SpreadSheet");
+
+                        if(id != null){
+                            //データの書き込み
+                            Object[][] values = {{"カテゴリー↓","テキスト↓","※1カテゴリー未入力の場合は「その他」に入ります。\n"+"※2上から順番に入力してください。"}};
+                            mSheet.setRange(id,values);
+
+                            //全データの取得
+                            List<List<Object>> data = mSheet.getRange(id);
+                            System.out.println(data);
+                        }
+                    }
+                });
+
+            }
         });
     }
 

@@ -75,6 +75,11 @@ public class LayerService extends Service implements View.OnTouchListener {
         // レイアウトファイルから重ね合わせするViewを作成する
         mView = layoutInflater.inflate(R.layout.layer, null);
         droplayer = mView.findViewById(R.id.layerlayout);
+//        droplayer.getLayoutParams().width = 750;
+//        droplayer.getLayoutParams().height = 1000;
+        droplayer.getLayoutParams().width = 300;
+        droplayer.getLayoutParams().height = 400;
+        droplayer.requestLayout();
         droplayer.setOnTouchListener(this);
         //インスタンスの取得
         LinearLayout layout = (LinearLayout)mView.findViewById(R.id.layout8);

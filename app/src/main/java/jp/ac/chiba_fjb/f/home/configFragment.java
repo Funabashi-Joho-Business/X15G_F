@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class configFragment extends Fragment {
     private SpreadSheet mSheet;
+    private static int radioId = 2;
 
 
     public configFragment() {
@@ -52,6 +55,10 @@ public class configFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         final CheckBox chkbox = (CheckBox) view.findViewById(R.id.checkBox);
         final LayerService layerService = new LayerService();
+        RadioGroup radioGroup =(RadioGroup)view.findViewById(R.id.radiogroup);
+        final RadioButton radioButton =(RadioButton)view.findViewById(R.id.radioButton);
+        RadioButton radioButton2 =(RadioButton)view.findViewById(R.id.radioButton2);
+        RadioButton radioButton3 =(RadioButton)view.findViewById(R.id.radioButton3);
         Button btn = (Button)view.findViewById(R.id.button3);
 
         //チェック状態確認
@@ -103,6 +110,15 @@ public class configFragment extends Fragment {
 
         });
 
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId){
+                switch (checkedId){
+                    default:
+                        break;
+                }
+            }
+            });
         btn.setOnClickListener(new View.OnClickListener(){
 
             @Override
